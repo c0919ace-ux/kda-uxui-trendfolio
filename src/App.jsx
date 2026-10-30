@@ -11,7 +11,6 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -141,7 +140,7 @@ export default function App() {
 }
 
 /* =========================================================================
-   1. 홈 뷰
+   1. 홈 - 소비 트렌드 발견
    ========================================================================= */
 function HomeView({ setActiveTab, onOpenSearch, onOpenComment }) {
   const issues = [
@@ -300,6 +299,28 @@ function HomeView({ setActiveTab, onOpenSearch, onOpenComment }) {
               </button>
             </div>
           </div>
+
+          <div className="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm space-y-2.5">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 bg-lime-500 rounded-full flex items-center justify-center text-white font-bold text-xs">OY</div>
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <span className="font-bold text-xs text-slate-900">올리브영</span>
+                  <span className="bg-green-50 text-green-600 text-[9px] font-bold px-1.5 py-0.5 rounded">NEW 브랜드</span>
+                </div>
+                <p className="text-[11px] text-slate-400 mt-0.5">해외 더마 브랜드 국내 1호 단독 론칭</p>
+              </div>
+            </div>
+            <div className="bg-slate-50 p-2 rounded-xl flex items-center justify-between text-xs">
+              <div className="flex items-center gap-1 text-slate-700 truncate">
+                <span className="text-blue-500">🛡️</span>
+                <span className="truncate text-[11px]">화제의 해외 더마 브랜드 단독 론칭...</span>
+              </div>
+              <button className="text-blue-600 font-bold shrink-0 flex items-center text-[10px]">
+                입점 브랜드 보기 <ChevronRight size={12} />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -342,7 +363,7 @@ function HomeView({ setActiveTab, onOpenSearch, onOpenComment }) {
 }
 
 /* =========================================================================
-   2. 내 소비 뷰
+   2. 내 소비 - 나의 소비 관심사 분석 (전체 복구)
    ========================================================================= */
 function MyExpenseView({ likedBrands, toggleLike, setLikedBrands }) {
   const [newBrandInput, setNewBrandInput] = useState('');
@@ -394,6 +415,12 @@ function MyExpenseView({ likedBrands, toggleLike, setLikedBrands }) {
             <div className="w-[21%] bg-emerald-500 rounded-full"></div>
             <div className="w-[12%] bg-slate-400 rounded-full"></div>
           </div>
+          <div className="flex justify-between text-[10px] text-slate-500 pt-1">
+            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>식음료</span>
+            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-pink-400"></span>패션·뷰티</span>
+            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>리빙·편의</span>
+            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>콘텐츠</span>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-2.5">
@@ -406,6 +433,11 @@ function MyExpenseView({ likedBrands, toggleLike, setLikedBrands }) {
               <p className="text-[10px] text-slate-400">지출 금액</p>
               <p className="font-extrabold text-sm text-slate-900">70.1 만원</p>
             </div>
+            <div className="bg-white p-2 rounded-xl text-[10px] space-y-1">
+              <p className="text-slate-400">주요 이용</p>
+              <p className="font-bold text-slate-800">스타벅스·배민 42건</p>
+              <p className="text-slate-400 pt-1 border-t border-slate-50">최대 지출처: 스타벅스(28건)</p>
+            </div>
           </div>
 
           <div className="bg-pink-50/50 p-3 rounded-2xl border border-pink-100 space-y-2">
@@ -416,6 +448,43 @@ function MyExpenseView({ likedBrands, toggleLike, setLikedBrands }) {
             <div>
               <p className="text-[10px] text-slate-400">지출 금액</p>
               <p className="font-extrabold text-sm text-slate-900">53.4 만원</p>
+            </div>
+            <div className="bg-white p-2 rounded-xl text-[10px] space-y-1">
+              <p className="text-slate-400">주요 이용</p>
+              <p className="font-bold text-slate-800">올리브영·무신사 18건</p>
+              <p className="text-slate-400 pt-1 border-t border-slate-50">최대 지출처: 올리브영(12건)</p>
+            </div>
+          </div>
+
+          <div className="bg-emerald-50/50 p-3 rounded-2xl border border-emerald-100 space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">리빙/편의</span>
+              <span className="font-black text-emerald-600 text-sm">21%</span>
+            </div>
+            <div>
+              <p className="text-[10px] text-slate-400">지출 금액</p>
+              <p className="font-extrabold text-sm text-slate-900">38.6 만원</p>
+            </div>
+            <div className="bg-white p-2 rounded-xl text-[10px] space-y-1">
+              <p className="text-slate-400">주요 이용</p>
+              <p className="font-bold text-slate-800">다이소·GS25 29건</p>
+              <p className="text-slate-400 pt-1 border-t border-slate-50">결제 빈도: 주 평균 2.4회</p>
+            </div>
+          </div>
+
+          <div className="bg-slate-100/70 p-3 rounded-2xl border border-slate-200 space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-[11px] font-bold text-slate-700 bg-slate-200 px-2 py-0.5 rounded-full">콘텐츠/여가</span>
+              <span className="font-black text-slate-600 text-sm">12%</span>
+            </div>
+            <div>
+              <p className="text-[10px] text-slate-400">지출 금액</p>
+              <p className="font-extrabold text-sm text-slate-900">22.1 만원</p>
+            </div>
+            <div className="bg-white p-2 rounded-xl text-[10px] space-y-1">
+              <p className="text-slate-400">주요 이용</p>
+              <p className="font-bold text-slate-800">넷플릭스·CGV 11건</p>
+              <p className="text-slate-400 pt-1 border-t border-slate-50">정기 구독: 월 3.8만원</p>
             </div>
           </div>
         </div>
@@ -508,12 +577,28 @@ function MyExpenseView({ likedBrands, toggleLike, setLikedBrands }) {
           )}
         </div>
       </div>
+
+      <div className="bg-blue-50 p-4 rounded-3xl border border-blue-100 space-y-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-xs">⚙️</div>
+            <div>
+              <h4 className="font-bold text-xs text-slate-900">소비 → 주식 연결 엔진</h4>
+              <p className="text-[10px] text-slate-500">내가 쓴 돈이 주주 수익으로 돌아오는 구조</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white p-3 rounded-2xl flex items-center justify-between">
+          <span className="text-xs text-slate-600 font-medium">💳 연동 브랜드 상장 매핑률</span>
+          <span className="font-black text-blue-600 text-sm">83.3% (5/6개)</span>
+        </div>
+      </div>
     </div>
   );
 }
 
 /* =========================================================================
-   3. 주식 트렌드 뷰
+   3. 주식 트렌드 - 트렌드·기업 분석 (전체 복구)
    ========================================================================= */
 function StockTrendView() {
   return (
@@ -536,6 +621,97 @@ function StockTrendView() {
 
         <div className="relative rounded-2xl overflow-hidden h-36 bg-slate-100">
           <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=600&q=80" alt="뷰티" className="w-full h-full object-cover" />
+          <span className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-white text-[10px] px-2 py-0.5 rounded-md">
+            🛡️ SNS 누적 리뷰 28만 건 돌파
+          </span>
+        </div>
+
+        <div className="bg-blue-50/60 p-3.5 rounded-2xl space-y-2">
+          <div className="flex justify-between items-center text-xs">
+            <span className="font-bold text-blue-900">📈 소셜 미디어 버즈량 분석</span>
+            <span className="text-[10px] text-slate-500">인스타·유튜브</span>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-xl font-black text-blue-600">+142%</span>
+            <span className="text-[11px] text-slate-500 font-medium">전분기 대비 온라인 언급 폭증</span>
+          </div>
+          <div className="h-2 bg-blue-100 rounded-full overflow-hidden">
+            <div className="h-full bg-blue-600 w-[70%]"></div>
+          </div>
+          <div className="flex justify-between text-[10px] text-slate-400">
+            <span>기존 이너뷰티 평균 (100)</span>
+            <span className="font-bold text-blue-600">현재 모멘텀 (242)</span>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <h3 className="font-bold text-xs text-slate-800 flex items-center gap-1">
+            <span>🔗</span> 밸류체인 연관 상장 기업 매핑
+          </h3>
+
+          <div className="space-y-1.5">
+            <div className="bg-slate-50 p-2.5 rounded-xl flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-6 rounded-full bg-purple-100 text-purple-700 font-bold flex items-center justify-center text-[10px]">A</span>
+                <div>
+                  <p className="font-bold text-slate-900">에이피알 <span className="text-[10px] text-slate-400 font-normal">코스피 278470</span></p>
+                  <p className="text-[10px] text-slate-400">자사몰 및 글로벌 글루타치온 라인업 공급</p>
+                </div>
+              </div>
+              <span className="font-bold text-red-500">+4.35%</span>
+            </div>
+
+            <div className="bg-slate-50 p-2.5 rounded-xl flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-6 rounded-full bg-pink-100 text-pink-700 font-bold flex items-center justify-center text-[10px]">C</span>
+                <div>
+                  <p className="font-bold text-slate-900">코스맥스 <span className="text-[10px] text-slate-400 font-normal">코스피 192820</span></p>
+                  <p className="text-[10px] text-slate-400">이너뷰티 젤리 제형 특화 ODM 수혜</p>
+                </div>
+              </div>
+              <span className="font-bold text-red-500">+1.82%</span>
+            </div>
+
+            <div className="bg-slate-50 p-2.5 rounded-xl flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-[10px]">N</span>
+                <div>
+                  <p className="font-bold text-slate-900">노바렉스 <span className="text-[10px] text-slate-400 font-normal">코스닥 194700</span></p>
+                  <p className="text-[10px] text-slate-400">국내 1위 건강기능식품 OEM/ODM 생산업체</p>
+                </div>
+              </div>
+              <span className="font-bold text-red-500">+0.95%</span>
+            </div>
+          </div>
+        </div>
+
+        <button className="w-full bg-blue-700 text-white font-bold text-xs py-3 rounded-2xl flex items-center justify-center gap-1">
+          연관 기업 '에이피알' 투자정보 분석 보기 <ChevronRight size={14} />
+        </button>
+      </div>
+
+      <div className="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm space-y-3">
+        <h2 className="font-bold text-sm text-slate-900 flex items-center gap-1">
+          <span className="text-blue-600">⚡</span> 주목할 신제품 · 원료 이슈
+        </h2>
+        <div className="space-y-2">
+          <span className="text-[10px] text-slate-400">F&B 원료 트렌드 · 편의점 품절 지수 급증</span>
+          <h3 className="font-bold text-xs text-slate-900 leading-snug">저당 디저트 열풍과 대체당 원료 공급사 탐색</h3>
+          <p className="text-[11px] text-slate-500 leading-relaxed">
+            알룰로스·에리스트리톨 기반 무설탕 베이커리와 음료 매출이 전년 대비 185% 폭증하며, 대형 식품 제조사향 원료 공급 독점 기업들의 실적 재평가가 가속화되고 있습니다.
+          </p>
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <div className="bg-slate-50 p-2 rounded-xl text-[10px]">
+              <span className="text-slate-400">대체당 원료 핵심사</span>
+              <p className="font-bold text-slate-800 mt-0.5">삼양사 (상장)</p>
+              <p className="text-emerald-600 font-semibold">알룰로스 대량 생산 체제</p>
+            </div>
+            <div className="bg-slate-50 p-2 rounded-xl text-[10px]">
+              <span className="text-slate-400">저당 완제품 유통사</span>
+              <p className="font-bold text-slate-800 mt-0.5">CJ제일제당 (상장)</p>
+              <p className="text-blue-600 font-semibold">B2B 원료 및 글로벌 수출</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -543,7 +719,7 @@ function StockTrendView() {
 }
 
 /* =========================================================================
-   4. 투자 정보 뷰
+   4. 투자 정보 - 에이피알(APR) AI 요약 & 주가 & 실적 (전체 복구)
    ========================================================================= */
 function InvestmentInfoView() {
   return (
@@ -566,15 +742,89 @@ function InvestmentInfoView() {
           <span className="text-pink-500 text-base">🌷</span>
           <span>우리가 쓰는 뷰티 디바이스 <strong>'메디큐브'</strong>와 뷰티 브랜드를 운영하는 기업이에요.</span>
         </div>
+
+        <div className="pt-2 space-y-1">
+          <div className="flex justify-between text-[11px] text-slate-400">
+            <span>현재 주가</span>
+            <span>2026.10.28 장마감 기준</span>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl font-black text-slate-900">52,400 원</span>
+            <span className="text-xs font-bold text-pink-500">▲ +2.1%</span>
+          </div>
+          <div className="h-16 bg-gradient-to-t from-pink-100/50 to-transparent rounded-2xl border-b border-pink-300 relative flex items-end justify-between p-2">
+            <span className="text-[9px] text-slate-400">최근 주가 추세</span>
+            <span className="text-[9px] text-slate-400">최근 1개월</span>
+          </div>
+        </div>
       </div>
+
+      <div className="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm space-y-3">
+        <h2 className="font-bold text-sm text-slate-900 flex items-center gap-1.5">
+          <Sparkles size={16} className="text-blue-600" /> AI 3줄 요약 브리프
+        </h2>
+
+        <div className="space-y-2 text-xs">
+          <div className="bg-slate-50 p-2.5 rounded-xl flex gap-2">
+            <span className="w-4 h-4 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-[10px] shrink-0">1</span>
+            <span className="text-slate-700">2030 소비자 중심의 <strong className="text-blue-600">홈 뷰티기기 수요 급증세</strong> 지속</span>
+          </div>
+
+          <div className="bg-slate-50 p-2.5 rounded-xl flex gap-2">
+            <span className="w-4 h-4 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-[10px] shrink-0">2</span>
+            <span className="text-slate-700">미국 및 일본 수출액 중심 글로벌 채널의 비약적 신장</span>
+          </div>
+
+          <div className="bg-slate-50 p-2.5 rounded-xl flex gap-2">
+            <span className="w-4 h-4 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-[10px] shrink-0">3</span>
+            <span className="text-slate-700">브랜드 확장에 따른 최근 마케팅비 지출 관리 여부가 핵심 관건</span>
+          </div>
+        </div>
+
+        <div className="bg-emerald-50/60 p-3 rounded-2xl space-y-1.5 text-xs">
+          <p className="font-bold text-emerald-900 flex items-center gap-1">
+            <span>🔄</span> 소비 트렌드 ⇄ 기업 실적 분석
+          </p>
+          <p className="text-slate-600 leading-relaxed text-[11px]">
+            올리브영 및 온라인 결제 데이터 급증이 뷰티 디바이스 실매출과 <strong className="text-emerald-700">매우 높은 양의 상관관계</strong>를 형성하고 있습니다.
+          </p>
+        </div>
+      </div>
+
+      <div className="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm space-y-3">
+        <div className="flex justify-between items-center">
+          <h2 className="font-bold text-sm text-slate-900">한눈에 보는 핵심 실적</h2>
+          <span className="text-[10px] text-slate-400">연간 기준 (YoY)</span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2.5">
+          <div className="bg-slate-50 p-3 rounded-2xl space-y-1">
+            <p className="text-[10px] text-slate-400">연간 매출액</p>
+            <p className="font-black text-sm text-slate-900">5,230억</p>
+            <p className="text-[10px] font-bold text-pink-500">📈 +32% YoY</p>
+          </div>
+
+          <div className="bg-slate-50 p-3 rounded-2xl space-y-1">
+            <p className="text-[10px] text-slate-400">영업이익 (이익률)</p>
+            <p className="font-black text-sm text-slate-900">1,040억</p>
+            <p className="text-[10px] font-bold text-emerald-600">⊕ 이익률 19.8%</p>
+          </div>
+        </div>
+      </div>
+
+      <button className="w-full bg-blue-900 hover:bg-blue-950 text-white font-bold text-xs py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-md">
+        00증권에서 상세보기 <ArrowUpRight size={16} />
+      </button>
     </div>
   );
 }
 
 /* =========================================================================
-   5. 마이페이지 뷰
+   5. 마이페이지 & 알림 설정 (전체 복구)
    ========================================================================= */
 function MyPageView({ likedBrands, setLikedBrands }) {
+  const [switches, setSwitches] = useState({ newProd: true, earnings: true, report: true });
+
   return (
     <div className="space-y-5">
       <div className="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-3">
@@ -585,6 +835,62 @@ function MyPageView({ likedBrands, setLikedBrands }) {
           <div className="flex items-center gap-1.5">
             <h2 className="font-black text-base text-slate-900">백보경님</h2>
             <span className="bg-pink-100 text-pink-600 text-[10px] font-bold px-2 py-0.5 rounded-full">🌷트렌드 탐험가 Lv.2</span>
+          </div>
+          <p className="text-[11px] text-slate-400">초보 투자자 2개월차</p>
+          <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden mt-1">
+            <div className="bg-blue-600 h-full w-[40%]"></div>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm space-y-3">
+        <div className="flex justify-between items-center">
+          <h3 className="font-bold text-sm text-slate-900 flex items-center gap-1">
+            <span>💟</span> 내가 찜한 서랍
+          </h3>
+          <span className="text-[11px] text-slate-400">편집 &gt;</span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          {['무신사', '올리브영', '스타벅스', '나이키', '탬버린즈', '디스커버리'].map((item, idx) => (
+            <div key={idx} className="bg-slate-50 p-2.5 rounded-2xl flex items-center justify-between text-xs">
+              <span className="font-bold text-slate-800">{item}</span>
+              <X size={12} className="text-slate-300" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm space-y-3">
+        <h3 className="font-bold text-sm text-slate-900 flex items-center gap-1">
+          <span>🔔</span> 트렌드 맞춤 알림 설정
+        </h3>
+
+        <div className="space-y-3 divide-y divide-slate-50">
+          <div className="pt-2 flex items-center justify-between">
+            <div>
+              <p className="font-bold text-xs text-slate-800">내 관심 브랜드 신제품 & 품절 대란 알림</p>
+              <p className="text-[10px] text-slate-400">실시간 SNS 바이럴 및 팝업 스토어 오픈 소식</p>
+            </div>
+            <button 
+              onClick={() => setSwitches({...switches, newProd: !switches.newProd})}
+              className={`w-11 h-6 rounded-full transition-colors p-1 flex items-center ${switches.newProd ? 'bg-blue-600 justify-end' : 'bg-slate-200 justify-start'}`}
+            >
+              <div className="w-4 h-4 rounded-full bg-white shadow-sm"></div>
+            </button>
+          </div>
+
+          <div className="pt-2 flex items-center justify-between">
+            <div>
+              <p className="font-bold text-xs text-slate-800">관심 브랜드 연관 기업 실적 발표 알림</p>
+              <p className="text-[10px] text-slate-400">소비 트렌드가 실적 공시로 연결되는 분기 모멘텀</p>
+            </div>
+            <button 
+              onClick={() => setSwitches({...switches, earnings: !switches.earnings})}
+              className={`w-11 h-6 rounded-full transition-colors p-1 flex items-center ${switches.earnings ? 'bg-blue-600 justify-end' : 'bg-slate-200 justify-start'}`}
+            >
+              <div className="w-4 h-4 rounded-full bg-white shadow-sm"></div>
+            </button>
           </div>
         </div>
       </div>
@@ -633,7 +939,7 @@ function SearchView({ searchQuery, setSearchQuery, onClose }) {
 }
 
 /* =========================================================================
-   7. 트렌드 의견 나누기 뷰 (Supabase DB 저장 & 삭제 & 영구 보존 완벽 구현)
+   7. 트렌드 의견 나누기 뷰 (Supabase 연동 + 삭제 + 영구 저장)
    ========================================================================= */
 function CommentView({ issue, onClose }) {
   const [selectedFeeling, setSelectedFeeling] = useState('기대돼요');
@@ -641,7 +947,6 @@ function CommentView({ issue, onClose }) {
   const [status, setStatus] = useState('idle');
   const [comments, setComments] = useState([]);
 
-  // 💡 1. 창을 열었을 때 Supabase DB에서 기존 댓글들 불러오기 (새로고침/재접속 시 유지)
   useEffect(() => {
     fetchComments();
   }, []);
@@ -657,7 +962,6 @@ function CommentView({ issue, onClose }) {
 
       if (data && data.length > 0) {
         const dbComments = data.map(item => {
-          // 저장된 "[기대돼요] 내용" 형태에서 감정과 본문 분리
           let feeling = '🔥 기대돼요';
           let text = item.input || '';
 
@@ -683,7 +987,6 @@ function CommentView({ issue, onClose }) {
 
         setComments(dbComments);
       } else {
-        // DB 데이터가 없는 경우 초기 가이드 예시 댓글 2개 표기
         setComments([
           {
             id: 'mock-1',
@@ -708,7 +1011,6 @@ function CommentView({ issue, onClose }) {
     }
   };
 
-  // 💡 2. 댓글 새 작성 & Supabase 저장
   const handleSubmit = async () => {
     const trimmed = inputText.trim();
     if (!trimmed || status === 'saving') return;
@@ -746,9 +1048,7 @@ function CommentView({ issue, onClose }) {
     }
   };
 
-  // 💡 3. 댓글 삭제 (Supabase DB에서도 완전 삭제)
   const handleDelete = async (id) => {
-    // 목업(예시) 댓글 삭제 처리
     if (typeof id === 'string' && id.startsWith('mock-')) {
       setComments(comments.filter(c => c.id !== id));
       return;
@@ -818,7 +1118,6 @@ function CommentView({ issue, onClose }) {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] text-slate-400">{c.time}</span>
-                  {/* 💡 삭제 버튼 */}
                   <button 
                     onClick={() => handleDelete(c.id)}
                     title="댓글 삭제"
