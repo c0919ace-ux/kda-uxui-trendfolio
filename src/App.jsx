@@ -719,11 +719,12 @@ function StockTrendView() {
 }
 
 /* =========================================================================
-   4. 투자 정보 - 에이피알(APR) AI 요약 & 주가 & 실적 (전체 복구)
+   4. 투자 정보 - 에이피알(APR) AI 요약 & 주가 그래프 (그래프 완전 복구)
    ========================================================================= */
 function InvestmentInfoView() {
   return (
     <div className="space-y-5">
+      {/* 메인 대상 기업 카드 */}
       <div className="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm space-y-3">
         <div className="flex justify-between items-start">
           <div>
@@ -743,6 +744,7 @@ function InvestmentInfoView() {
           <span>우리가 쓰는 뷰티 디바이스 <strong>'메디큐브'</strong>와 뷰티 브랜드를 운영하는 기업이에요.</span>
         </div>
 
+        {/* 주가 그래프 정보 (핑크색 SVG 그래프 추가) */}
         <div className="pt-2 space-y-1">
           <div className="flex justify-between text-[11px] text-slate-400">
             <span>현재 주가</span>
@@ -752,13 +754,41 @@ function InvestmentInfoView() {
             <span className="text-2xl font-black text-slate-900">52,400 원</span>
             <span className="text-xs font-bold text-pink-500">▲ +2.1%</span>
           </div>
-          <div className="h-16 bg-gradient-to-t from-pink-100/50 to-transparent rounded-2xl border-b border-pink-300 relative flex items-end justify-between p-2">
-            <span className="text-[9px] text-slate-400">최근 주가 추세</span>
-            <span className="text-[9px] text-slate-400">최근 1개월</span>
+
+          {/* 📈 핑크색 완만한 곡선 주가 차트 박스 */}
+          <div className="relative h-20 bg-gradient-to-b from-pink-50/80 to-pink-100/30 rounded-2xl border border-pink-100 overflow-hidden p-2 flex flex-col justify-between">
+            <div className="flex justify-between text-[10px] text-slate-400 font-medium z-10">
+              <span>최근 주가 추세</span>
+              <span>최근 1개월</span>
+            </div>
+
+            {/* SVG 곡선 및 그라데이션 채우기 */}
+            <svg className="absolute bottom-0 left-0 w-full h-12" viewBox="0 0 300 50" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="pinkGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#ec4899" stopOpacity="0.4" />
+                  <stop offset="100%" stopColor="#ec4899" stopOpacity="0.0" />
+                </linearGradient>
+              </defs>
+              {/* 면적 채우기 */}
+              <path 
+                d="M 0 35 Q 75 40 150 25 T 300 10 L 300 50 L 0 50 Z" 
+                fill="url(#pinkGradient)" 
+              />
+              {/* 선 그리기 */}
+              <path 
+                d="M 0 35 Q 75 40 150 25 T 300 10" 
+                fill="none" 
+                stroke="#ec4899" 
+                strokeWidth="2.5" 
+                strokeLinecap="round"
+              />
+            </svg>
           </div>
         </div>
       </div>
 
+      {/* AI 3줄 요약 브리프 */}
       <div className="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm space-y-3">
         <h2 className="font-bold text-sm text-slate-900 flex items-center gap-1.5">
           <Sparkles size={16} className="text-blue-600" /> AI 3줄 요약 브리프
@@ -791,6 +821,7 @@ function InvestmentInfoView() {
         </div>
       </div>
 
+      {/* 한눈에 보는 핵심 실적 */}
       <div className="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm space-y-3">
         <div className="flex justify-between items-center">
           <h2 className="font-bold text-sm text-slate-900">한눈에 보는 핵심 실적</h2>
