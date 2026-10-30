@@ -36,6 +36,7 @@ export default function App() {
         <CommentView 
           issue={selectedIssue} 
           onClose={() => setSelectedIssue(null)} 
+          isDarkMode={isDarkMode}
         />
       ) : isSearchOpen ? (
         /* 검색 화면 모달 */
@@ -43,6 +44,7 @@ export default function App() {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           onClose={() => setIsSearchOpen(false)}
+          isDarkMode={isDarkMode}
         />
       ) : (
         <>
@@ -169,6 +171,8 @@ function HomeView({ setActiveTab, onOpenSearch, onOpenComment, isDarkMode }) {
     }
   ];
 
+  const cardStyle = isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100';
+
   return (
     <div className="space-y-6">
       <div className="space-y-3">
@@ -225,7 +229,7 @@ function HomeView({ setActiveTab, onOpenSearch, onOpenComment, isDarkMode }) {
         </div>
 
         <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-          <div className={`min-w-[220px] rounded-2xl overflow-hidden border shadow-sm shrink-0 ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
+          <div className={`min-w-[220px] rounded-2xl overflow-hidden border shadow-sm shrink-0 ${cardStyle}`}>
             <div className="relative h-28 bg-slate-200">
               <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=500&q=80" alt="디저트" className="w-full h-full object-cover" />
               <span className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-white text-[10px] font-medium px-2 py-0.5 rounded-md">2030 오픈런 간식 1위</span>
@@ -237,7 +241,7 @@ function HomeView({ setActiveTab, onOpenSearch, onOpenComment, isDarkMode }) {
             </div>
           </div>
 
-          <div className={`min-w-[180px] rounded-2xl overflow-hidden border shadow-sm shrink-0 ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
+          <div className={`min-w-[180px] rounded-2xl overflow-hidden border shadow-sm shrink-0 ${cardStyle}`}>
             <div className="relative h-28 bg-slate-200">
               <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=500&q=80" alt="올리브영" className="w-full h-full object-cover" />
               <span className="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] font-medium px-2 py-0.5 rounded-md">세일 완판</span>
@@ -263,7 +267,7 @@ function HomeView({ setActiveTab, onOpenSearch, onOpenComment, isDarkMode }) {
         </div>
 
         <div className="space-y-2.5">
-          <div className={`p-3.5 rounded-2xl border shadow-sm space-y-2.5 ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
+          <div className={`p-3.5 rounded-2xl border shadow-sm space-y-2.5 ${cardStyle}`}>
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 bg-black rounded-xl flex items-center justify-center text-white text-[9px] font-black tracking-tighter">MUSINSA</div>
               <div>
@@ -284,6 +288,28 @@ function HomeView({ setActiveTab, onOpenSearch, onOpenComment, isDarkMode }) {
               </button>
             </div>
           </div>
+
+          <div className={`p-3.5 rounded-2xl border shadow-sm space-y-2.5 ${cardStyle}`}>
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 bg-emerald-800 rounded-full flex items-center justify-center text-white font-bold text-xs">☕</div>
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <span className={`font-bold text-xs ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>스타벅스</span>
+                  <span className="bg-blue-50 text-blue-600 text-[9px] font-bold px-1.5 py-0.5 rounded">프로모션</span>
+                </div>
+                <p className="text-[11px] text-slate-400 mt-0.5">프리퀀시 증정품 조기 소진 주의</p>
+              </div>
+            </div>
+            <div className={`p-2 rounded-xl flex items-center justify-between text-xs ${isDarkMode ? 'bg-slate-700/50' : 'bg-slate-50'}`}>
+              <div className="flex items-center gap-1 text-slate-300 truncate">
+                <span className="text-emerald-500">🎉</span>
+                <span className="truncate text-[11px]">봄 시즌 한정 체리블라썸 음료 & MD 오픈...</span>
+              </div>
+              <button className="text-blue-500 font-bold shrink-0 flex items-center text-[10px]">
+                이벤트 보기 <ChevronRight size={12} />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -295,7 +321,7 @@ function HomeView({ setActiveTab, onOpenSearch, onOpenComment, isDarkMode }) {
 
         <div className="grid grid-cols-2 gap-3">
           {issues.map((item) => (
-            <div key={item.id} className={`rounded-2xl overflow-hidden border shadow-sm flex flex-col justify-between ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
+            <div key={item.id} className={`rounded-2xl overflow-hidden border shadow-sm flex flex-col justify-between ${cardStyle}`}>
               <div>
                 <div className="h-28 bg-slate-100 relative overflow-hidden">
                   <img src={item.img} alt={item.title} className="w-full h-full object-cover" />
@@ -342,6 +368,7 @@ function MyExpenseView({ likedBrands, toggleLike, setLikedBrands, isDarkMode }) 
   };
 
   const cardStyle = isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100';
+  const subCardBg = isDarkMode ? 'bg-slate-700/50 border-slate-700' : 'bg-slate-50 border-slate-100';
 
   return (
     <div className="space-y-5">
@@ -368,12 +395,131 @@ function MyExpenseView({ likedBrands, toggleLike, setLikedBrands, isDarkMode }) 
           </div>
         </div>
 
-        <div className={`p-3.5 rounded-2xl space-y-2 ${isDarkMode ? 'bg-slate-700/50' : 'bg-slate-50'}`}>
+        <div className={`${subCardBg} p-3.5 rounded-2xl space-y-2 border`}>
           <div className="flex justify-between items-center text-xs">
             <span className="text-slate-400">총 소비 누적액</span>
             <span className="text-pink-500 font-bold text-[11px]">↑ 직전 월 대비 +8.4%</span>
           </div>
           <p className={`text-2xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>1,842,000 원</p>
+          <div className="flex h-2 rounded-full overflow-hidden gap-1 pt-1">
+            <div className="w-[38%] bg-purple-500 rounded-full"></div>
+            <div className="w-[29%] bg-pink-400 rounded-full"></div>
+            <div className="w-[21%] bg-emerald-500 rounded-full"></div>
+            <div className="w-[12%] bg-slate-400 rounded-full"></div>
+          </div>
+          <div className="flex justify-between text-[10px] text-slate-400 pt-1">
+            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>식음료</span>
+            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-pink-400"></span>패션·뷰티</span>
+            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>리빙·편의</span>
+            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>콘텐츠</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2.5">
+          <div className="bg-purple-50/50 p-3 rounded-2xl border border-purple-100 space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-[11px] font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full">F&B 소비</span>
+              <span className="font-black text-purple-600 text-sm">38%</span>
+            </div>
+            <div>
+              <p className="text-[10px] text-slate-400">지출 금액</p>
+              <p className="font-extrabold text-sm text-slate-900">70.1 만원</p>
+            </div>
+            <div className="bg-white p-2 rounded-xl text-[10px] space-y-1">
+              <p className="text-slate-400">주요 이용</p>
+              <p className="font-bold text-slate-800">스타벅스·배민 42건</p>
+              <p className="text-slate-400 pt-1 border-t border-slate-50">최대 지출처: 스타벅스(28건)</p>
+            </div>
+          </div>
+
+          <div className="bg-pink-50/50 p-3 rounded-2xl border border-pink-100 space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-[11px] font-bold text-pink-700 bg-pink-100 px-2 py-0.5 rounded-full">패션/뷰티</span>
+              <span className="font-black text-pink-600 text-sm">29%</span>
+            </div>
+            <div>
+              <p className="text-[10px] text-slate-400">지출 금액</p>
+              <p className="font-extrabold text-sm text-slate-900">53.4 만원</p>
+            </div>
+            <div className="bg-white p-2 rounded-xl text-[10px] space-y-1">
+              <p className="text-slate-400">주요 이용</p>
+              <p className="font-bold text-slate-800">올리브영·무신사 18건</p>
+              <p className="text-slate-400 pt-1 border-t border-slate-50">최대 지출처: 올리브영(12건)</p>
+            </div>
+          </div>
+
+          <div className="bg-emerald-50/50 p-3 rounded-2xl border border-emerald-100 space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">리빙/편의</span>
+              <span className="font-black text-emerald-600 text-sm">21%</span>
+            </div>
+            <div>
+              <p className="text-[10px] text-slate-400">지출 금액</p>
+              <p className="font-extrabold text-sm text-slate-900">38.6 만원</p>
+            </div>
+            <div className="bg-white p-2 rounded-xl text-[10px] space-y-1">
+              <p className="text-slate-400">주요 이용</p>
+              <p className="font-bold text-slate-800">다이소·GS25 29건</p>
+              <p className="text-slate-400 pt-1 border-t border-slate-50">결제 빈도: 주 평균 2.4회</p>
+            </div>
+          </div>
+
+          <div className="bg-slate-100/70 p-3 rounded-2xl border border-slate-200 space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-[11px] font-bold text-slate-700 bg-slate-200 px-2 py-0.5 rounded-full">콘텐츠/여가</span>
+              <span className="font-black text-slate-600 text-sm">12%</span>
+            </div>
+            <div>
+              <p className="text-[10px] text-slate-400">지출 금액</p>
+              <p className="font-extrabold text-sm text-slate-900">22.1 만원</p>
+            </div>
+            <div className="bg-white p-2 rounded-xl text-[10px] space-y-1">
+              <p className="text-slate-400">주요 이용</p>
+              <p className="font-bold text-slate-800">넷플릭스·CGV 11건</p>
+              <p className="text-slate-400 pt-1 border-t border-slate-50">정기 구독: 월 3.8만원</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* AI 결제기반 추천 */}
+      <div className="bg-purple-50/60 p-4 rounded-3xl border border-purple-100 space-y-3">
+        <span className="text-[10px] font-bold bg-purple-600 text-white px-2 py-0.5 rounded-full">✨ AI 결제기반 추천</span>
+        <h3 className="font-bold text-sm text-slate-900">자주 결제한 브랜드, 바로 찜하고 알림 받기</h3>
+        <p className="text-[11px] text-slate-500 leading-snug">결제 데이터 기반 추천 브랜드! 하트를 눌러 찜하면 주식 이슈와 혜택 알림을 실시간으로 보내드려요.</p>
+
+        <div className="flex gap-2.5 overflow-x-auto pb-1 scrollbar-none">
+          <div className="bg-white p-3 rounded-2xl border border-slate-100 shrink-0 space-y-2 text-center w-36 shadow-sm">
+            <p className="font-bold text-xs text-slate-900">올리브영</p>
+            <p className="text-[10px] text-pink-500 font-bold">최근 12회</p>
+            <button 
+              onClick={() => toggleLike('올리브영')}
+              className={`w-full text-[11px] font-bold py-1.5 rounded-xl flex items-center justify-center gap-1 transition-colors ${
+                likedBrands.includes('올리브영')
+                  ? 'bg-pink-500 text-white'
+                  : 'bg-blue-50 text-blue-600 border border-blue-100'
+              }`}
+            >
+              <Heart size={12} fill={likedBrands.includes('올리브영') ? "currentColor" : "none"} />
+              {likedBrands.includes('올리브영') ? '찜완료' : '찜하기'}
+            </button>
+          </div>
+
+          <div className="bg-white p-3 rounded-2xl border border-slate-100 shrink-0 space-y-2 text-center w-36 shadow-sm">
+            <p className="font-bold text-xs text-slate-900">스타벅스</p>
+            <p className="text-[10px] text-blue-500 font-bold">최근 28회</p>
+            <button 
+              onClick={() => toggleLike('스타벅스')}
+              className={`w-full text-[11px] font-bold py-1.5 rounded-xl flex items-center justify-center gap-1 transition-colors ${
+                likedBrands.includes('스타벅스')
+                  ? 'bg-pink-500 text-white'
+                  : 'bg-blue-50 text-blue-600 border border-blue-100'
+              }`}
+            >
+              <Heart size={12} fill={likedBrands.includes('스타벅스') ? "currentColor" : "none"} />
+              {likedBrands.includes('스타벅스') ? '찜완료' : '찜하기'}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -416,6 +562,22 @@ function MyExpenseView({ likedBrands, toggleLike, setLikedBrands, isDarkMode }) 
           ))}
         </div>
       </div>
+
+      <div className="bg-blue-50 p-4 rounded-3xl border border-blue-100 space-y-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-xs">⚙️</div>
+            <div>
+              <h4 className="font-bold text-xs text-slate-900">소비 → 주식 연결 엔진</h4>
+              <p className="text-[10px] text-slate-500">내가 쓴 돈이 주주 수익으로 돌아오는 구조</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white p-3 rounded-2xl flex items-center justify-between">
+          <span className="text-xs text-slate-600 font-medium">💳 연동 브랜드 상장 매핑률</span>
+          <span className="font-black text-blue-600 text-sm">83.3% (5/6개)</span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -425,6 +587,7 @@ function MyExpenseView({ likedBrands, toggleLike, setLikedBrands, isDarkMode }) 
    ========================================================================= */
 function StockTrendView({ isDarkMode }) {
   const cardStyle = isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100';
+  const subCardBg = isDarkMode ? 'bg-slate-700/50 border-slate-700' : 'bg-slate-50 border-slate-100';
 
   return (
     <div className="space-y-5">
@@ -443,6 +606,101 @@ function StockTrendView({ isDarkMode }) {
         <h2 className={`text-base font-black leading-snug ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
           품절 대란 'K-글루타치온 젤리'와 이너뷰티 급상승
         </h2>
+
+        <div className="relative rounded-2xl overflow-hidden h-36 bg-slate-100">
+          <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=600&q=80" alt="뷰티" className="w-full h-full object-cover" />
+          <span className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-white text-[10px] px-2 py-0.5 rounded-md">
+            🛡️ SNS 누적 리뷰 28만 건 돌파
+          </span>
+        </div>
+
+        <div className="bg-blue-50/60 p-3.5 rounded-2xl space-y-2">
+          <div className="flex justify-between items-center text-xs">
+            <span className="font-bold text-blue-900">📈 소셜 미디어 버즈량 분석</span>
+            <span className="text-[10px] text-slate-500">인스타·유튜브</span>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-xl font-black text-blue-600">+142%</span>
+            <span className="text-[11px] text-slate-500 font-medium">전분기 대비 온라인 언급 폭증</span>
+          </div>
+          <div className="h-2 bg-blue-100 rounded-full overflow-hidden">
+            <div className="h-full bg-blue-600 w-[70%]"></div>
+          </div>
+          <div className="flex justify-between text-[10px] text-slate-400">
+            <span>기존 이너뷰티 평균 (100)</span>
+            <span className="font-bold text-blue-600">현재 모멘텀 (242)</span>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <h3 className={`font-bold text-xs flex items-center gap-1 ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>
+            <span>🔗</span> 밸류체인 연관 상장 기업 매핑
+          </h3>
+
+          <div className="space-y-1.5">
+            <div className={`${subCardBg} p-2.5 rounded-xl flex items-center justify-between text-xs border`}>
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-6 rounded-full bg-purple-100 text-purple-700 font-bold flex items-center justify-center text-[10px]">A</span>
+                <div>
+                  <p className={`font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>에이피알 <span className="text-[10px] text-slate-400 font-normal">코스피 278470</span></p>
+                  <p className="text-[10px] text-slate-400">자사몰 및 글로벌 글루타치온 라인업 공급</p>
+                </div>
+              </div>
+              <span className="font-bold text-red-500">+4.35%</span>
+            </div>
+
+            <div className={`${subCardBg} p-2.5 rounded-xl flex items-center justify-between text-xs border`}>
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-6 rounded-full bg-pink-100 text-pink-700 font-bold flex items-center justify-center text-[10px]">C</span>
+                <div>
+                  <p className={`font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>코스맥스 <span className="text-[10px] text-slate-400 font-normal">코스피 192820</span></p>
+                  <p className="text-[10px] text-slate-400">이너뷰티 젤리 제형 특화 ODM 수혜</p>
+                </div>
+              </div>
+              <span className="font-bold text-red-500">+1.82%</span>
+            </div>
+
+            <div className={`${subCardBg} p-2.5 rounded-xl flex items-center justify-between text-xs border`}>
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-[10px]">N</span>
+                <div>
+                  <p className={`font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>노바렉스 <span className="text-[10px] text-slate-400 font-normal">코스닥 194700</span></p>
+                  <p className="text-[10px] text-slate-400">국내 1위 건강기능식품 OEM/ODM 생산업체</p>
+                </div>
+              </div>
+              <span className="font-bold text-red-500">+0.95%</span>
+            </div>
+          </div>
+        </div>
+
+        <button className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs py-3 rounded-2xl flex items-center justify-center gap-1">
+          연관 기업 '에이피알' 투자정보 분석 보기 <ChevronRight size={14} />
+        </button>
+      </div>
+
+      <div className={`${cardStyle} p-4 rounded-3xl border shadow-sm space-y-3`}>
+        <h2 className={`font-bold text-sm flex items-center gap-1 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+          <span className="text-blue-600">⚡</span> 주목할 신제품 · 원료 이슈
+        </h2>
+        <div className="space-y-2">
+          <span className="text-[10px] text-slate-400">F&B 원료 트렌드 · 편의점 품절 지수 급증</span>
+          <h3 className={`font-bold text-xs leading-snug ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>저당 디저트 열풍과 대체당 원료 공급사 탐색</h3>
+          <p className="text-[11px] text-slate-400 leading-relaxed">
+            알룰로스·에리스트리톨 기반 무설탕 베이커리와 음료 매출이 전년 대비 185% 폭증하며, 대형 식품 제조사향 원료 공급 독점 기업들의 실적 재평가가 가속화되고 있습니다.
+          </p>
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <div className={`${subCardBg} p-2 rounded-xl text-[10px] border`}>
+              <span className="text-slate-400">대체당 원료 핵심사</span>
+              <p className={`font-bold mt-0.5 ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>삼양사 (상장)</p>
+              <p className="text-emerald-500 font-semibold">알룰로스 대량 생산 체제</p>
+            </div>
+            <div className={`${subCardBg} p-2 rounded-xl text-[10px] border`}>
+              <span className="text-slate-400">저당 완제품 유통사</span>
+              <p className={`font-bold mt-0.5 ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>CJ제일제당 (상장)</p>
+              <p className="text-blue-500 font-semibold">B2B 원료 및 글로벌 수출</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -453,6 +711,7 @@ function StockTrendView({ isDarkMode }) {
    ========================================================================= */
 function InvestmentInfoView({ isDarkMode }) {
   const cardStyle = isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100';
+  const subCardBg = isDarkMode ? 'bg-slate-700/50 border-slate-700' : 'bg-slate-50 border-slate-100';
 
   return (
     <div className="space-y-5">
@@ -468,6 +727,11 @@ function InvestmentInfoView({ isDarkMode }) {
           <button className={`p-2 rounded-xl ${isDarkMode ? 'bg-slate-700 text-slate-300' : 'bg-slate-100 text-slate-600'}`}>
             <Bookmark size={18} />
           </button>
+        </div>
+
+        <div className="bg-pink-50/60 p-3 rounded-2xl flex items-center gap-2 text-xs text-slate-700">
+          <span className="text-pink-500 text-base">🌷</span>
+          <span>우리가 쓰는 뷰티 디바이스 <strong>'메디큐브'</strong>와 뷰티 브랜드를 운영하는 기업이에요.</span>
         </div>
 
         {/* 주가 그래프 정보 */}
@@ -500,12 +764,71 @@ function InvestmentInfoView({ isDarkMode }) {
           </div>
         </div>
       </div>
+
+      {/* AI 3줄 요약 브리프 */}
+      <div className={`${cardStyle} p-4 rounded-3xl border shadow-sm space-y-3`}>
+        <h2 className={`font-bold text-sm flex items-center gap-1.5 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+          <Sparkles size={16} className="text-blue-600" /> AI 3줄 요약 브리프
+        </h2>
+
+        <div className="space-y-2 text-xs">
+          <div className={`${subCardBg} p-2.5 rounded-xl flex gap-2 border`}>
+            <span className="w-4 h-4 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-[10px] shrink-0">1</span>
+            <span className={isDarkMode ? 'text-slate-200' : 'text-slate-700'}>2030 소비자 중심의 <strong className="text-blue-500">홈 뷰티기기 수요 급증세</strong> 지속</span>
+          </div>
+
+          <div className={`${subCardBg} p-2.5 rounded-xl flex gap-2 border`}>
+            <span className="w-4 h-4 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-[10px] shrink-0">2</span>
+            <span className={isDarkMode ? 'text-slate-200' : 'text-slate-700'}>미국 및 일본 수출액 중심 글로벌 채널의 비약적 신장</span>
+          </div>
+
+          <div className={`${subCardBg} p-2.5 rounded-xl flex gap-2 border`}>
+            <span className="w-4 h-4 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-[10px] shrink-0">3</span>
+            <span className={isDarkMode ? 'text-slate-200' : 'text-slate-700'}>브랜드 확장에 따른 최근 마케팅비 지출 관리 여부가 핵심 관건</span>
+          </div>
+        </div>
+
+        <div className="bg-emerald-50/60 p-3 rounded-2xl space-y-1.5 text-xs">
+          <p className="font-bold text-emerald-900 flex items-center gap-1">
+            <span>🔄</span> 소비 트렌드 ⇄ 기업 실적 분석
+          </p>
+          <p className="text-slate-600 leading-relaxed text-[11px]">
+            올리브영 및 온라인 결제 데이터 급증이 뷰티 디바이스 실매출과 <strong className="text-emerald-700">매우 높은 양의 상관관계</strong>를 형성하고 있습니다.
+          </p>
+        </div>
+      </div>
+
+      {/* 한눈에 보는 핵심 실적 */}
+      <div className={`${cardStyle} p-4 rounded-3xl border shadow-sm space-y-3`}>
+        <div className="flex justify-between items-center">
+          <h2 className={`font-bold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>한눈에 보는 핵심 실적</h2>
+          <span className="text-[10px] text-slate-400">연간 기준 (YoY)</span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2.5">
+          <div className={`${subCardBg} p-3 rounded-2xl space-y-1 border`}>
+            <p className="text-[10px] text-slate-400">연간 매출액</p>
+            <p className={`font-black text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>5,230억</p>
+            <p className="text-[10px] font-bold text-pink-500">📈 +32% YoY</p>
+          </div>
+
+          <div className={`${subCardBg} p-3 rounded-2xl space-y-1 border`}>
+            <p className="text-[10px] text-slate-400">영업이익 (이익률)</p>
+            <p className={`font-black text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>1,040억</p>
+            <p className="text-[10px] font-bold text-emerald-500">⊕ 이익률 19.8%</p>
+          </div>
+        </div>
+      </div>
+
+      <button className="w-full bg-blue-900 hover:bg-blue-950 text-white font-bold text-xs py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-md">
+        00증권에서 상세보기 <ArrowUpRight size={16} />
+      </button>
     </div>
   );
 }
 
 /* =========================================================================
-   5. 마이페이지 (수정 완료!)
+   5. 마이페이지
    ========================================================================= */
 function MyPageView({ likedBrands, setLikedBrands, isDarkMode, setIsDarkMode }) {
   const [switches, setSwitches] = useState({ newProd: true, earnings: true, report: true });
@@ -649,7 +972,7 @@ function MyPageView({ likedBrands, setLikedBrands, isDarkMode, setIsDarkMode }) 
 /* =========================================================================
    6. 검색 뷰
    ========================================================================= */
-function SearchView({ searchQuery, setSearchQuery, onClose }) {
+function SearchView({ searchQuery, setSearchQuery, onClose, isDarkMode }) {
   const [localInput, setLocalInput] = useState(searchQuery);
   const [recentSearches, setRecentSearches] = useState(['메가커피', '삼양식품', '아모레퍼시픽', '다이소']);
 
@@ -671,10 +994,12 @@ function SearchView({ searchQuery, setSearchQuery, onClose }) {
     setRecentSearches(recentSearches.filter(t => t !== tag));
   };
 
+  const cardStyle = isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100';
+
   return (
-    <div className="min-h-screen bg-slate-50 p-4 space-y-4 z-50 relative">
+    <div className={`min-h-screen p-4 space-y-4 z-50 relative ${isDarkMode ? 'bg-slate-900 text-white' : 'bg-slate-50 text-slate-800'}`}>
       <div className="flex items-center gap-2">
-        <button onClick={onClose} className="p-1 text-slate-700 hover:bg-slate-200 rounded-full">
+        <button onClick={onClose} className={`p-1 rounded-full ${isDarkMode ? 'hover:bg-slate-800 text-white' : 'hover:bg-slate-200 text-slate-700'}`}>
           <ChevronLeft size={24} />
         </button>
         <div className="relative flex-1 flex items-center">
@@ -685,7 +1010,7 @@ function SearchView({ searchQuery, setSearchQuery, onClose }) {
             onChange={(e) => setLocalInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
             placeholder="브랜드, 핫한 간식, 뷰티 기업 검색..." 
-            className="w-full bg-white border border-blue-500 rounded-xl py-2.5 pl-9 pr-16 text-xs focus:outline-none shadow-sm"
+            className={`w-full border border-blue-500 rounded-xl py-2.5 pl-9 pr-16 text-xs focus:outline-none shadow-sm ${isDarkMode ? 'bg-slate-800 text-white' : 'bg-white text-slate-900'}`}
             autoFocus
           />
           <button 
@@ -699,7 +1024,7 @@ function SearchView({ searchQuery, setSearchQuery, onClose }) {
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-bold text-slate-700">최근 검색어</span>
+          <span className={`text-xs font-bold ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>최근 검색어</span>
           {recentSearches.length > 0 && (
             <button onClick={() => setRecentSearches([])} className="text-[10px] text-slate-400 hover:text-slate-600">
               전체 삭제
@@ -711,7 +1036,7 @@ function SearchView({ searchQuery, setSearchQuery, onClose }) {
             <span 
               key={idx}
               onClick={() => handleSearch(tag)}
-              className="bg-white border border-slate-200 text-slate-700 text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1 cursor-pointer hover:bg-slate-50"
+              className={`border text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1 cursor-pointer ${isDarkMode ? 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'}`}
             >
               #{tag}
               <X size={12} className="text-slate-400 hover:text-red-500" onClick={(e) => handleRemoveRecent(e, tag)} />
@@ -721,14 +1046,14 @@ function SearchView({ searchQuery, setSearchQuery, onClose }) {
       </div>
 
       <div className="space-y-3 pt-2">
-        <h3 className="font-bold text-xs text-slate-800">
+        <h3 className={`font-bold text-xs ${isDarkMode ? 'text-slate-300' : 'text-slate-800'}`}>
           "{searchQuery || localInput}" 연관 추천 결과
         </h3>
         <div className="space-y-2">
-          <div className="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+          <div className={`${cardStyle} p-3.5 rounded-2xl border shadow-sm flex items-center justify-between`}>
             <div className="space-y-1">
               <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">소비 트렌드</span>
-              <p className="font-bold text-xs text-slate-900">{searchQuery || localInput || '인기 브랜드'} 관련 오픈런 & 품절 이슈</p>
+              <p className={`font-bold text-xs ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{searchQuery || localInput || '인기 브랜드'} 관련 오픈런 & 품절 이슈</p>
             </div>
             <ChevronRight size={16} className="text-slate-300" />
           </div>
@@ -741,7 +1066,7 @@ function SearchView({ searchQuery, setSearchQuery, onClose }) {
 /* =========================================================================
    7. 트렌드 의견 나누기 뷰
    ========================================================================= */
-function CommentView({ issue, onClose }) {
+function CommentView({ issue, onClose, isDarkMode }) {
   const [selectedFeeling, setSelectedFeeling] = useState('기대돼요');
   const [inputText, setInputText] = useState('');
   const [status, setStatus] = useState('idle');
@@ -786,6 +1111,25 @@ function CommentView({ issue, onClose }) {
         });
 
         setComments(dbComments);
+      } else {
+        setComments([
+          {
+            id: 'mock-1',
+            user: '민트초코 님',
+            level: 'Lv.2',
+            time: '11분 전',
+            feeling: '🔥 기대돼요',
+            text: '저 여기 주말에 2시간 웨이팅해서 먹었는데 진짜 대박이에요... 주식 사야하나 고민됨'
+          },
+          {
+            id: 'mock-2',
+            user: '초보자 님',
+            level: 'Lv.1',
+            time: '30분 전',
+            feeling: '🤔 글쎄요',
+            text: '요즘 콜라보가 너무 많아서 금방 식지 않을까 걱정되네요.'
+          }
+        ]);
       }
     } catch (err) {
       console.error('댓글 불러오기 오류:', err.message);
@@ -829,6 +1173,11 @@ function CommentView({ issue, onClose }) {
   };
 
   const handleDelete = async (id) => {
+    if (typeof id === 'string' && id.startsWith('mock-')) {
+      setComments(comments.filter(c => c.id !== id));
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('input_db')
@@ -843,46 +1192,111 @@ function CommentView({ issue, onClose }) {
     }
   };
 
+  const cardStyle = isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100';
+
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-between relative animate-fadeIn pb-24 z-50">
-      <div className="sticky top-0 bg-white/95 backdrop-blur-md z-40 px-4 py-3 flex items-center justify-between border-b border-slate-100">
-        <button onClick={onClose} className="p-1 text-slate-700 hover:bg-slate-100 rounded-full">
+    <div className={`min-h-screen flex flex-col justify-between relative animate-fadeIn pb-24 z-50 ${isDarkMode ? 'bg-slate-900 text-white' : 'bg-slate-50 text-slate-800'}`}>
+      <div className={`sticky top-0 backdrop-blur-md z-40 px-4 py-3 flex items-center justify-between border-b ${isDarkMode ? 'bg-slate-900/95 border-slate-800' : 'bg-white/95 border-slate-100'}`}>
+        <button onClick={onClose} className={`p-1 rounded-full ${isDarkMode ? 'hover:bg-slate-800 text-white' : 'hover:bg-slate-100 text-slate-700'}`}>
           <ChevronLeft size={22} />
         </button>
-        <h1 className="text-sm font-bold text-slate-900">트렌드 의견 나누기</h1>
-        <button onClick={onClose} className="p-1 text-slate-700 hover:bg-slate-100 rounded-full">
+        <h1 className="text-sm font-bold">트렌드 의견 나누기</h1>
+        <button onClick={onClose} className={`p-1 rounded-full ${isDarkMode ? 'hover:bg-slate-800 text-white' : 'hover:bg-slate-100 text-slate-700'}`}>
           <X size={20} />
         </button>
       </div>
 
       <div className="p-4 space-y-4 flex-1 overflow-y-auto">
+        <div className={`${cardStyle} p-3.5 rounded-2xl border shadow-sm flex items-center gap-3`}>
+          <img src={issue?.img} alt={issue?.title} className="w-16 h-16 rounded-xl object-cover shrink-0" />
+          <div className="space-y-1">
+            <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">#{issue?.tag}</span>
+            <h2 className={`font-bold text-xs leading-snug ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{issue?.title}</h2>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <div className="bg-blue-50/80 p-3 rounded-2xl border border-blue-100 flex items-center justify-between">
+            <span className="text-xs font-bold text-blue-900 flex items-center gap-1">🔥 기대돼요</span>
+            <span className="text-sm font-black text-blue-600">74%</span>
+          </div>
+          <div className="bg-purple-50/80 p-3 rounded-2xl border border-purple-100 flex items-center justify-between">
+            <span className="text-xs font-bold text-purple-900 flex items-center gap-1">🤔 글쎄요</span>
+            <span className="text-sm font-black text-purple-600">26%</span>
+          </div>
+        </div>
+
         <div className="space-y-2.5 pt-2">
+          <h3 className="font-bold text-xs">실시간 의견 피드 ({comments.length})</h3>
+
           {comments.map((c) => (
-            <div key={c.id} className="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm space-y-1.5 relative">
+            <div key={c.id} className={`${cardStyle} p-3 rounded-2xl border shadow-sm space-y-1.5 relative group`}>
               <div className="flex justify-between items-center text-xs">
-                <span className="font-bold text-slate-900">{c.user}</span>
-                <button onClick={() => handleDelete(c.id)} className="text-slate-300 hover:text-red-500 p-1">
-                  <Trash2 size={13} />
-                </button>
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-full bg-purple-100 text-purple-700 font-bold flex items-center justify-center text-xs">
+                    {c.user[0]}
+                  </div>
+                  <div>
+                    <span className={`font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{c.user}</span>
+                    <span className="text-[9px] text-purple-600 font-bold bg-purple-50 px-1.5 py-0.5 rounded ml-1.5">{c.level}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] text-slate-400">{c.time}</span>
+                  <button onClick={() => handleDelete(c.id)} className="text-slate-300 hover:text-red-500 p-1">
+                    <Trash2 size={13} />
+                  </button>
+                </div>
               </div>
-              <p className="text-xs text-slate-700">{c.text}</p>
+
+              <span className="inline-block text-[9px] font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full">
+                {c.feeling}
+              </span>
+
+              <p className={`text-xs leading-relaxed pr-6 ${isDarkMode ? 'text-slate-200' : 'text-slate-700'}`}>{c.text}</p>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-slate-200 p-3 flex gap-2 z-50">
-        <input
-          type="text"
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-          placeholder="이 이슈에 대한 의견을 남겨주세요..."
-          className="flex-1 bg-slate-100 border border-slate-200 rounded-xl py-2 px-3 text-xs focus:outline-none"
-        />
-        <button onClick={handleSubmit} className="bg-blue-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl">
-          등록
-        </button>
+      <div className={`fixed bottom-0 left-0 right-0 max-w-md mx-auto border-t p-3 space-y-2 z-50 ${isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
+        <div className="flex gap-1.5">
+          {[
+            { id: '기대돼요', label: '🔥 기대돼요' },
+            { id: '이미 샀어요', label: '🛒 이미 샀어요' },
+            { id: '글쎄요', label: '🤔 글쎄요' }
+          ].map((f) => (
+            <button
+              key={f.id}
+              onClick={() => setSelectedFeeling(f.id)}
+              className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-colors ${
+                selectedFeeling === f.id
+                  ? 'bg-blue-600 text-white'
+                  : isDarkMode ? 'bg-slate-800 text-slate-300' : 'bg-slate-100 text-slate-600'
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+            placeholder="이 이슈에 대한 의견을 남겨주세요..."
+            className={`flex-1 border rounded-xl py-2 px-3 text-xs focus:outline-none ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-100 border-slate-200'}`}
+          />
+          <button
+            onClick={handleSubmit}
+            disabled={status === 'saving'}
+            className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shrink-0"
+          >
+            {status === 'saving' ? '저장중' : '등록'}
+          </button>
+        </div>
       </div>
     </div>
   );
