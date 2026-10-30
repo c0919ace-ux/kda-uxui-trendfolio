@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createClient } from '@supabase/supabase-js'; // Supabase 패키지
 import { 
   Search, Bell, User, ShoppingBag, TrendingUp, Sparkles, 
   ChevronRight, Heart, Bookmark, ArrowUpRight, MessageSquare,
@@ -6,9 +7,18 @@ import {
   Shield, Settings, Clock, ChevronLeft, Lock
 } from 'lucide-react';
 
+// 💡 본인의 Supabase URL과 Anon Key를 여기에 입력하세요
+const SUPABASE_URL = "https://fzgjbqlvnmenmkoloxhn.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_6EC5-VTJtf_Kr2-5_-2QOA_9UQSTtvc";
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 export default function App() {
   // 탭 상태: 'home', 'myExpense', 'stockTrend', 'investmentInfo', 'myPage'
   const [activeTab, setActiveTab] = useState('home');
+
+  // 검색 모달/페이지 관련 상태
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // 찜한 브랜드 목록
   const [likedBrands, setLikedBrands] = useState(['스타벅스', '나이키', '올리브영', '무신사']);
@@ -23,99 +33,122 @@ export default function App() {
 
   return (
     <div className="max-w-md mx-auto bg-slate-50 min-h-screen pb-20 font-sans text-slate-800 relative shadow-xl">
-      {/* GNB Header */}
-      <header className="sticky top-0 bg-white/90 backdrop-blur-md z-50 px-4 py-3 flex items-center justify-between border-b border-slate-100">
-        <div className="flex items-center gap-2">
-          {activeTab === 'myPage' ? (
+      {/* 검색 화면이 켜졌을 때 검색 전용 페이지 표시 */}
+      {isSearchOpen ? (
+        <SearchView 
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          onClose={() => setIsSearchOpen(false)}
+          setActiveTab={setActiveTab}
+        />
+      ) : (
+        <>
+          {/* GNB Header */}
+          <header className="sticky top-0 bg-white/90 backdrop-blur-md z-50 px-4 py-3 flex items-center justify-between border-b border-slate-100">
             <div className="flex items-center gap-2">
-              <button onClick={() => setActiveTab('home')} className="p-1 -ml-1 text-slate-700">
-                <ChevronLeft size={24} />
-              </button>
-              <span className="text-lg font-bold text-slate-900">My Page</span>
+              {activeTab === 'myPage' ? (
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setActiveTab('home')} className="p-1 -ml-1 text-slate-700">
+                    <ChevronLeft size={24} />
+                  </button>
+                  <span className="text-lg font-bold text-slate-900">My Page</span>
+                </div>
+              ) : (
+                <>
+                  <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
+                    <TrendingUp size={20} />
+                  </div>
+                  <div>
+                    <span className="text-xs text-blue-600 font-semibold block leading-none">00증권</span>
+                    <span className="text-base font-bold text-slate-900 leading-none">TrendFolio</span>
+                  </div>
+                </>
+              )}
             </div>
-          ) : (
-            <>
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
-                <TrendingUp size={20} />
-              </div>
-              <div>
-                <span className="text-xs text-blue-600 font-semibold block leading-none">00증권</span>
-                <span className="text-base font-bold text-slate-900 leading-none">TrendFolio</span>
-              </div>
-            </>
-          )}
-        </div>
-        <div className="flex items-center gap-3">
-          {activeTab !== 'myPage' && (
-            <>
-              <button className="p-1.5 text-slate-600 hover:bg-slate-100 rounded-full">
-                <Search size={22} />
+            <div className="flex items-center gap-3">
+              {activeTab !== 'myPage' && (
+                <>
+                  <button 
+                    onClick={() => setIsSearchOpen(true)}
+                    className="p-1.5 text-slate-600 hover:bg-slate-100 rounded-full"
+                  >
+                    <Search size={22} />
+                  </button>
+                  <button className="p-1.5 text-slate-600 hover:bg-slate-100 rounded-full relative">
+                    <Bell size={22} />
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                  </button>
+                </>
+              )}
+              <button 
+                onClick={() => setActiveTab('myPage')}
+                className={`p-1.5 rounded-full transition-colors ${activeTab === 'myPage' ? 'bg-purple-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
+              >
+                <User size={20} />
               </button>
-              <button className="p-1.5 text-slate-600 hover:bg-slate-100 rounded-full relative">
-                <Bell size={22} />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-              </button>
-            </>
-          )}
-          <button 
-            onClick={() => setActiveTab('myPage')}
-            className={`p-1.5 rounded-full transition-colors ${activeTab === 'myPage' ? 'bg-purple-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
-          >
-            <User size={20} />
-          </button>
-        </div>
-      </header>
+            </div>
+          </header>
 
-      {/* Main Content Area */}
-      <main className="p-4 space-y-6">
-        {activeTab === 'home' && (
-          <HomeView setActiveTab={setActiveTab} likedBrands={likedBrands} toggleLike={toggleLike} />
-        )}
-        {activeTab === 'myExpense' && (
-          <MyExpenseView likedBrands={likedBrands} toggleLike={toggleLike} />
-        )}
-        {activeTab === 'stockTrend' && (
-          <StockTrendView setActiveTab={setActiveTab} />
-        )}
-        {activeTab === 'investmentInfo' && (
-          <InvestmentInfoView />
-        )}
-        {activeTab === 'myPage' && (
-          <MyPageView likedBrands={likedBrands} setLikedBrands={setLikedBrands} />
-        )}
-      </main>
+          {/* Main Content Area */}
+          <main className="p-4 space-y-6">
+            {activeTab === 'home' && (
+              <HomeView 
+                setActiveTab={setActiveTab} 
+                likedBrands={likedBrands} 
+                toggleLike={toggleLike}
+                onOpenSearch={(query = '') => {
+                  setSearchQuery(query);
+                  setIsSearchOpen(true);
+                }}
+              />
+            )}
+            {activeTab === 'myExpense' && (
+              <MyExpenseView likedBrands={likedBrands} toggleLike={toggleLike} />
+            )}
+            {activeTab === 'stockTrend' && (
+              <StockTrendView setActiveTab={setActiveTab} />
+            )}
+            {activeTab === 'investmentInfo' && (
+              <InvestmentInfoView />
+            )}
+            {activeTab === 'myPage' && (
+              <MyPageView likedBrands={likedBrands} setLikedBrands={setLikedBrands} />
+            )}
+          </main>
 
-      {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-slate-200 px-6 py-2 flex justify-between items-center z-50">
-        <button 
-          onClick={() => setActiveTab('home')}
-          className={`flex flex-col items-center gap-1 ${activeTab === 'home' ? 'text-blue-600 font-bold' : 'text-slate-400'}`}
-        >
-          <Home size={22} />
-          <span className="text-xs">홈</span>
-        </button>
-        <button 
-          onClick={() => setActiveTab('myExpense')}
-          className={`flex flex-col items-center gap-1 ${activeTab === 'myExpense' ? 'text-blue-600 font-bold' : 'text-slate-400'}`}
-        >
-          <CreditCard size={22} />
-          <span className="text-xs">내 소비</span>
-        </button>
-        <button 
-          onClick={() => setActiveTab('stockTrend')}
-          className={`flex flex-col items-center gap-1 ${activeTab === 'stockTrend' ? 'text-blue-600 font-bold' : 'text-slate-400'}`}
-        >
-          <LineChart size={22} />
-          <span className="text-xs">주식 트렌드</span>
-        </button>
-        <button 
-          onClick={() => setActiveTab('investmentInfo')}
-          className={`flex flex-col items-center gap-1 ${activeTab === 'investmentInfo' ? 'text-blue-600 font-bold' : 'text-slate-400'}`}
-        >
-          <PieChart size={22} />
-          <span className="text-xs">투자정보</span>
-        </button>
-      </nav>
+          {/* Bottom Navigation */}
+          <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-slate-200 px-6 py-2 flex justify-between items-center z-50">
+            <button 
+              onClick={() => setActiveTab('home')}
+              className={`flex flex-col items-center gap-1 ${activeTab === 'home' ? 'text-blue-600 font-bold' : 'text-slate-400'}`}
+            >
+              <Home size={22} />
+              <span className="text-xs">홈</span>
+            </button>
+            <button 
+              onClick={() => setActiveTab('myExpense')}
+              className={`flex flex-col items-center gap-1 ${activeTab === 'myExpense' ? 'text-blue-600 font-bold' : 'text-slate-400'}`}
+            >
+              <CreditCard size={22} />
+              <span className="text-xs">내 소비</span>
+            </button>
+            <button 
+              onClick={() => setActiveTab('stockTrend')}
+              className={`flex flex-col items-center gap-1 ${activeTab === 'stockTrend' ? 'text-blue-600 font-bold' : 'text-slate-400'}`}
+            >
+              <LineChart size={22} />
+              <span className="text-xs">주식 트렌드</span>
+            </button>
+            <button 
+              onClick={() => setActiveTab('investmentInfo')}
+              className={`flex flex-col items-center gap-1 ${activeTab === 'investmentInfo' ? 'text-blue-600 font-bold' : 'text-slate-400'}`}
+            >
+              <PieChart size={22} />
+              <span className="text-xs">투자정보</span>
+            </button>
+          </nav>
+        </>
+      )}
     </div>
   );
 }
@@ -123,7 +156,7 @@ export default function App() {
 /* =========================================================================
    1. 홈 뷰 (이미지 6 기준)
    ========================================================================= */
-function HomeView({ setActiveTab, likedBrands, toggleLike }) {
+function HomeView({ setActiveTab, likedBrands, toggleLike, onOpenSearch }) {
   return (
     <div className="space-y-6">
       <div className="space-y-3">
@@ -140,26 +173,43 @@ function HomeView({ setActiveTab, likedBrands, toggleLike }) {
           </div>
         </div>
 
+        {/* 검색창 */}
         <div className="relative flex items-center">
           <Search size={18} className="absolute left-3.5 text-slate-400" />
           <input 
             type="text" 
             placeholder="브랜드, 핫한 간식, 뷰티 기업 검색..." 
             className="w-full bg-white border border-slate-200 rounded-xl py-3 pl-10 pr-20 text-sm focus:outline-none focus:border-blue-500 shadow-sm"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                onOpenSearch(e.target.value);
+              }
+            }}
           />
-          <button className="absolute right-1.5 bg-blue-700 text-white text-xs font-semibold px-3 py-2 rounded-lg flex items-center gap-1">
-            발견 <ChevronRight size={14} />
+          <button 
+            onClick={(e) => {
+              const input = e.currentTarget.previousElementSibling;
+              onOpenSearch(input.value);
+            }}
+            className="absolute right-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3.5 py-2 rounded-lg flex items-center gap-1 transition-colors"
+          >
+            검색
           </button>
         </div>
 
+        {/* 최근 본 키워드 */}
         <div className="flex items-center gap-2 text-xs overflow-x-auto pb-1 scrollbar-none">
           <span className="text-slate-400 flex items-center gap-1 shrink-0">
             <span className="text-[10px]">🕒</span> 최근 본
           </span>
           {['#메가커피', '#삼양식품', '#아모레퍼시픽'].map((tag, idx) => (
-            <span key={idx} className="bg-white border border-slate-200 text-slate-600 px-2.5 py-1 rounded-full shrink-0 font-medium">
+            <button 
+              key={idx} 
+              onClick={() => onOpenSearch(tag.replace('#', ''))}
+              className="bg-white border border-slate-200 text-slate-600 px-2.5 py-1 rounded-full shrink-0 font-medium hover:bg-slate-50"
+            >
               {tag}
-            </span>
+            </button>
           ))}
         </div>
       </div>
@@ -334,12 +384,14 @@ function HomeView({ setActiveTab, likedBrands, toggleLike }) {
 
           <div className="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm flex flex-col justify-between">
             <div>
-              <div className="h-28 bg-slate-200 relative">
+              <div className="h-28 bg-purple-50 relative overflow-hidden flex items-center justify-center">
                 <img 
-                  src="https://images.unsplash.com/photo-1608248597260-6521e8638d38?auto=format&fit=crop&w=400&q=80" 
+                  src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=400&q=80" 
                   alt="뷰티 앰플" 
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover z-10 relative"
+                  onError={(e) => { e.target.style.display = 'none'; }}
                 />
+                <span className="text-2xl absolute z-0">✨</span>
               </div>
               <div className="p-3 space-y-1.5">
                 <span className="text-[10px] font-bold text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded">가성비 뷰티</span>
@@ -1052,17 +1104,16 @@ function InvestmentInfoView() {
 }
 
 /* =========================================================================
-   5. 마이페이지 뷰 (이미지 3 기준 구현)
+   5. 마이페이지 뷰 (이미지 3 기준)
    ========================================================================= */
 function MyPageView({ likedBrands, setLikedBrands }) {
-  const [shelfTab, setShelfTab] = useState('brand'); // 'brand' | 'company'
+  const [shelfTab, setShelfTab] = useState('brand');
   const [notifications, setNotifications] = useState({
     newProduct: true,
     financialReport: true,
     weeklyReport: true
   });
 
-  // 서랍 아이템 리스트
   const initialBrandItems = [
     { id: 'm', logo: 'M', name: '무신사', tag: '소비 급상승', color: 'bg-slate-100 text-slate-800' },
     { id: 'oy', logo: 'OY', name: '올리브영', tag: '뷰티 1위', color: 'bg-emerald-100 text-emerald-800' },
@@ -1084,7 +1135,6 @@ function MyPageView({ likedBrands, setLikedBrands }) {
 
   return (
     <div className="space-y-6">
-      {/* 백보경님 프로필 카드 */}
       <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm space-y-3 relative">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
@@ -1101,7 +1151,6 @@ function MyPageView({ likedBrands, setLikedBrands }) {
           </div>
         </div>
 
-        {/* XP 레벨 프로그레스 바 */}
         <div className="bg-slate-50 p-2.5 rounded-xl space-y-1.5 border border-slate-100">
           <div className="flex justify-between items-center text-[11px]">
             <span className="w-5 h-5 bg-purple-600 rounded-full text-white flex items-center justify-center text-[10px] font-bold">
@@ -1115,7 +1164,6 @@ function MyPageView({ likedBrands, setLikedBrands }) {
         </div>
       </div>
 
-      {/* 내가 찜한 서랍 */}
       <div className="space-y-3">
         <div className="flex justify-between items-center">
           <h2 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
@@ -1124,7 +1172,6 @@ function MyPageView({ likedBrands, setLikedBrands }) {
           <button className="text-xs text-slate-400 font-medium">편집 &gt;</button>
         </div>
 
-        {/* 탭 버튼 */}
         <div className="bg-slate-200/70 p-1 rounded-xl flex text-xs font-bold">
           <button 
             onClick={() => setShelfTab('brand')}
@@ -1144,7 +1191,6 @@ function MyPageView({ likedBrands, setLikedBrands }) {
           </button>
         </div>
 
-        {/* 서랍 아이템 그리드 */}
         <div className="grid grid-cols-2 gap-2.5">
           {shelfItems.map((item) => (
             <div key={item.id} className="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
@@ -1165,7 +1211,6 @@ function MyPageView({ likedBrands, setLikedBrands }) {
         </div>
       </div>
 
-      {/* 트렌드 맞춤 알림 설정 */}
       <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm space-y-4">
         <h2 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
           <Bell size={18} className="text-purple-600" /> 트렌드 맞춤 알림 설정
@@ -1225,7 +1270,6 @@ function MyPageView({ likedBrands, setLikedBrands }) {
         </div>
       </div>
 
-      {/* 최근 확인한 콘텐츠 히스토리 */}
       <div className="space-y-3">
         <div className="flex justify-between items-center">
           <h2 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
@@ -1279,7 +1323,6 @@ function MyPageView({ likedBrands, setLikedBrands }) {
         </div>
       </div>
 
-      {/* 데이터 및 보안 설정 */}
       <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm space-y-3">
         <h2 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
           <Lock size={18} className="text-purple-600" /> 데이터 및 보안 설정
@@ -1304,7 +1347,6 @@ function MyPageView({ likedBrands, setLikedBrands }) {
         </div>
       </div>
 
-      {/* 하단 서비스 정책 푸터 */}
       <div className="text-center text-[11px] text-slate-400 space-x-2 pt-2 pb-4">
         <button className="hover:underline">서비스 이용약관</button>
         <span>·</span>
@@ -1312,6 +1354,189 @@ function MyPageView({ likedBrands, setLikedBrands }) {
         <span>·</span>
         <button className="hover:underline">회원 탈퇴</button>
       </div>
+    </div>
+  );
+}
+
+/* =========================================================================
+   6. 검색 및 통합 검색 결과 뷰 (Supabase 연동 포함)
+   ========================================================================= */
+function SearchView({ searchQuery, setSearchQuery, onClose, setActiveTab }) {
+  const [term, setTerm] = useState(searchQuery || '');
+  const [recentSearches, setRecentSearches] = useState(['메가커피', '삼양식품', '아모레퍼시픽', '에이피알', '올리브영']);
+  const [status, setStatus] = useState("idle");
+
+  const popularKeywords = [
+    { rank: 1, name: '에이피알', isUp: true },
+    { rank: 2, name: '글루타치온 젤리', isUp: true },
+    { rank: 3, name: '올리브영 세일', isUp: false },
+    { rank: 4, name: '무신사 메가세일', isUp: true },
+    { rank: 5, name: '다이소 뷰티', isUp: true }
+  ];
+
+  // Supabase input_db 테이블에 데이터 추가 함수
+  const handleInsert = async (content) => {
+    const trimmedContent = content.trim();
+    if (!trimmedContent || status === "saving") return;
+
+    setStatus("saving");
+
+    try {
+      const { error } = await supabase
+        .from("input_db")
+        .insert({ input: trimmedContent });
+
+      if (error) throw error;
+
+      setStatus("saved");
+      console.log("Supabase 저장 성공:", trimmedContent);
+    } catch (err) {
+      console.error("Supabase 저장 실패:", err.message);
+      setStatus("error");
+    }
+  };
+
+  const handleSearch = (keyword) => {
+    const trimmed = keyword.trim();
+    if (!trimmed) return;
+
+    setTerm(trimmed);
+    
+    if (!recentSearches.includes(trimmed)) {
+      setRecentSearches([trimmed, ...recentSearches.slice(0, 4)]);
+    }
+
+    handleInsert(trimmed);
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50 p-4 space-y-5 animate-fadeIn">
+      <div className="flex items-center gap-2">
+        <button onClick={onClose} className="p-1.5 text-slate-600 hover:bg-slate-200 rounded-full">
+          <ChevronLeft size={24} />
+        </button>
+        <div className="relative flex-1 flex items-center">
+          <Search size={18} className="absolute left-3 text-slate-400" />
+          <input 
+            type="text" 
+            value={term}
+            onChange={(e) => setTerm(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSearch(term)}
+            placeholder="브랜드, 핫한 간식, 뷰티 기업 검색..."
+            autoFocus
+            className="w-full bg-white border border-slate-200 rounded-xl py-2.5 pl-9 pr-10 text-sm focus:outline-none focus:border-blue-500 shadow-sm"
+          />
+          {term && (
+            <button onClick={() => setTerm('')} className="absolute right-3 text-slate-400">
+              <X size={16} />
+            </button>
+          )}
+        </div>
+        <button 
+          onClick={() => handleSearch(term)}
+          disabled={status === "saving"}
+          className="bg-blue-600 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shrink-0 disabled:bg-slate-400"
+        >
+          {status === "saving" ? "저장중..." : "검색"}
+        </button>
+      </div>
+
+      {!term ? (
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <div className="flex justify-between items-center text-xs">
+              <span className="font-bold text-slate-700">최근 검색어</span>
+              <button onClick={() => setRecentSearches([])} className="text-slate-400">전체 삭제</button>
+            </div>
+            {recentSearches.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {recentSearches.map((item, idx) => (
+                  <span 
+                    key={idx}
+                    onClick={() => handleSearch(item)}
+                    className="bg-white border border-slate-200 text-slate-700 text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-1.5 cursor-pointer hover:bg-slate-50"
+                  >
+                    <span>{item}</span>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setRecentSearches(recentSearches.filter(s => s !== item));
+                      }} 
+                      className="text-slate-400 hover:text-slate-600"
+                    >
+                      <X size={12} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-slate-400 py-2">최근 검색 내역이 없습니다.</p>
+            )}
+          </div>
+
+          <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm space-y-3">
+            <div className="flex justify-between items-center">
+              <h3 className="font-bold text-sm text-slate-900 flex items-center gap-1.5">
+                <span className="text-red-500">🔥</span> 실시간 인기 검색 트렌드
+              </h3>
+              <span className="text-[10px] text-slate-400">14:00 기준</span>
+            </div>
+
+            <div className="space-y-2.5 pt-1">
+              {popularKeywords.map((item) => (
+                <div 
+                  key={item.rank}
+                  onClick={() => handleSearch(item.name)}
+                  className="flex items-center justify-between text-xs cursor-pointer hover:bg-slate-50 p-1.5 rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className={`font-extrabold w-4 text-center ${item.rank <= 3 ? 'text-blue-600' : 'text-slate-400'}`}>
+                      {item.rank}
+                    </span>
+                    <span className="font-semibold text-slate-800">{item.name}</span>
+                  </div>
+                  <span className={`text-[10px] font-bold ${item.isUp ? 'text-red-500' : 'text-slate-400'}`}>
+                    {item.isUp ? '▲ 급상승' : '-'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          <p className="text-xs text-slate-500 font-medium">
+            '<span className="text-blue-600 font-bold">{term}</span>' 검색 결과입니다.
+          </p>
+
+          <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm space-y-3">
+            <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">연관 상장 기업</span>
+            <div className="flex items-center justify-between pt-1">
+              <div>
+                <h4 className="font-bold text-sm text-slate-900">에이피알 (278470)</h4>
+                <p className="text-xs text-slate-400 mt-0.5">뷰티 디바이스 메디큐브 제조 및 유통</p>
+              </div>
+              <button 
+                onClick={() => {
+                  onClose();
+                  setActiveTab('investmentInfo');
+                }}
+                className="bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1"
+              >
+                분석 보기 <ChevronRight size={14} />
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm space-y-2">
+            <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded">관련 소비 트렌드</span>
+            <h4 className="font-bold text-xs text-slate-900 pt-1">글루타치온 젤리 & 이너뷰티 품절 대란</h4>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              2030 소비자의 이너뷰티 디바이스 및 기능성 디저트 구매 급증에 따른 분석 결과...
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
