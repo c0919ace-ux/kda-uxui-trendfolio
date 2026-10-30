@@ -16,6 +16,7 @@ export default function App() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIssue, setSelectedIssue] = useState(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   // 찜한 브랜드 중앙 상태 관리
   const [likedBrands, setLikedBrands] = useState(['스타벅스', '나이키', '올리브영', '무신사']);
@@ -29,7 +30,7 @@ export default function App() {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-slate-50 min-h-screen pb-20 font-sans text-slate-800 relative shadow-xl">
+    <div className={`max-w-md mx-auto min-h-screen pb-20 font-sans relative shadow-xl transition-colors duration-300 ${isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800'}`}>
       {/* 댓글 상세 화면 모달 */}
       {selectedIssue ? (
         <CommentView 
@@ -110,9 +111,14 @@ export default function App() {
               <InvestmentInfoView />
             )}
             {activeTab === 'myPage' && (
-              <MyPageView likedBrands={likedBrands} setLikedBrands={setLikedBrands} />
+              <MyPageView 
+                likedBrands={likedBrands} 
+                setLikedBrands={setLikedBrands} 
+                isDarkMode={isDarkMode} 
+                setIsDarkMode={setIsDarkMode} 
+                />
             )}
-          </main>
+            </main>
 
           {/* Bottom Nav */}
           <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 backdrop-blur-md border-t border-slate-200 px-6 py-2.5 flex justify-between items-center z-50">
@@ -931,6 +937,29 @@ function MyPageView({ likedBrands, setLikedBrands }) {
         <h3 className="font-bold text-sm text-slate-900 flex items-center gap-1">
           <span>🔔</span> 트렌드 맞춤 알림 설정
         </h3>
+
+        {/* 🌙 다크 모드 토글 스위치 배너 */}
+        <div className={`p-4 rounded-3xl border shadow-sm transition-colors ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className={`w-9 h-9 rounded-2xl flex items-center justify-center font-bold text-sm ${isDarkMode ? 'bg-purple-900/50 text-purple-300' : 'bg-purple-50 text-purple-600'}`}>
+                {isDarkMode ? '🌙' : '☀️'}
+              </div>
+              <div>
+                <h3 className={`font-bold text-xs ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>화면 테마 설정</h3>
+                <p className="text-[10px] text-slate-400">눈이 편안한 {isDarkMode ? '다크 모드' : '라이트 모드'} 사용 중</p>
+              </div>
+            </div>
+            
+            {/* 토글 스위치 버튼 */}
+            <button 
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className={`w-12 h-6 rounded-full transition-colors p-1 flex items-center ${isDarkMode ? 'bg-purple-600 justify-end' : 'bg-slate-200 justify-start'}`}
+            >
+              <div className="w-4 h-4 rounded-full bg-white shadow-md transition-transform"></div>
+            </button>
+          </div>
+        </div>
 
         <div className="space-y-3 divide-y divide-slate-50">
           <div className="pt-2 flex items-center justify-between">
