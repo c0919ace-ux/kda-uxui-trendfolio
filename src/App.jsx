@@ -843,6 +843,41 @@ function MyPageView({ likedBrands, setLikedBrands }) {
         </div>
       </div>
 
+          {/* 💳 카드 정보 등록/수정 배너 (추가할 코드) */}
+      <div className="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 font-bold flex items-center justify-center text-xs">
+              💳
+            </div>
+            <div>
+              <h3 className="font-bold text-xs text-slate-900">내 결제 카드 관리</h3>
+              <p className="text-[10px] text-slate-400">소비 분석에 사용될 카드를 등록/수정하세요</p>
+            </div>
+          </div>
+          <button 
+            onClick={() => alert('카드 등록/수정 모달이 열립니다.')}
+            className="text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-xl transition-colors shrink-0"
+          >
+            카드 수정 &gt;
+          </button>
+        </div>
+
+        {/* 등록된 대표 카드 정보 */}
+        <div className="bg-slate-50 p-3 rounded-2xl flex items-center justify-between border border-slate-100">
+          <div className="flex items-center gap-2.5">
+            <span className="text-xs font-black text-blue-800 bg-blue-100 px-2 py-0.5 rounded">신한</span>
+            <div className="text-xs">
+              <p className="font-bold text-slate-800">Deep Dream 체크카드</p>
+              <p className="text-[10px] text-slate-400">**** **** **** 1024</p>
+            </div>
+          </div>
+          <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+            연동 완료
+          </span>
+        </div>
+      </div>
+
       <div className="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm space-y-3">
         <div className="flex justify-between items-center">
           <h3 className="font-bold text-sm text-slate-900 flex items-center gap-1">
@@ -899,40 +934,112 @@ function MyPageView({ likedBrands, setLikedBrands }) {
 }
 
 /* =========================================================================
-   6. 검색 뷰
+   6. 검색 뷰 (검색 버튼, 최근 검색어, 연관 결과 목록 복구)
    ========================================================================= */
 function SearchView({ searchQuery, setSearchQuery, onClose }) {
   const [localInput, setLocalInput] = useState(searchQuery);
+  const [recentSearches, setRecentSearches] = useState(['메가커피', '삼양식품', '아모레퍼시픽', '다이소']);
+
+  // 검색 실행 함수
+  const handleSearch = (term) => {
+    const targetTerm = term !== undefined ? term : localInput;
+    const trimmed = targetTerm.trim();
+    if (!trimmed) return;
+
+    setSearchQuery(trimmed);
+    setLocalInput(trimmed);
+
+    // 최근 검색어 중복 제거 후 추가
+    if (!recentSearches.includes(trimmed)) {
+      setRecentSearches([trimmed, ...recentSearches.slice(0, 4)]);
+    }
+  };
+
+  const handleRemoveRecent = (e, tag) => {
+    e.stopPropagation();
+    setRecentSearches(recentSearches.filter(t => t !== tag));
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 space-y-4 z-50 relative">
+      {/* 상단 검색바 */}
       <div className="flex items-center gap-2">
         <button onClick={onClose} className="p-1 text-slate-700 hover:bg-slate-200 rounded-full">
           <ChevronLeft size={24} />
         </button>
-        <div className="relative flex-1">
-          <Search size={16} className="absolute left-3.5 top-3.5 text-slate-400" />
+        <div className="relative flex-1 flex items-center">
+          <Search size={16} className="absolute left-3.5 text-slate-400" />
           <input 
             type="text" 
             value={localInput}
-            onChange={(e) => {
-              setLocalInput(e.target.value);
-              setSearchQuery(e.target.value);
-            }}
+            onChange={(e) => setLocalInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
             placeholder="브랜드, 핫한 간식, 뷰티 기업 검색..." 
-            className="w-full bg-white border border-blue-500 rounded-xl py-2.5 pl-9 pr-4 text-xs focus:outline-none shadow-sm"
+            className="w-full bg-white border border-blue-500 rounded-xl py-2.5 pl-9 pr-16 text-xs focus:outline-none shadow-sm"
             autoFocus
           />
+          <button 
+            onClick={() => handleSearch()}
+            className="absolute right-1.5 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg"
+          >
+            검색
+          </button>
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm text-center py-12 space-y-2">
-        <p className="font-bold text-sm text-slate-800">
-          "{localInput || searchQuery}"에 대한 검색 결과
-        </p>
-        <p className="text-xs text-slate-400">
-          {localInput ? '관련 소비 트렌드 및 주식 종목을 찾았습니다.' : '검색어를 입력해 주세요.'}
-        </p>
+      {/* 최근 검색어 태그 */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-bold text-slate-700">최근 검색어</span>
+          {recentSearches.length > 0 && (
+            <button onClick={() => setRecentSearches([])} className="text-[10px] text-slate-400 hover:text-slate-600">
+              전체 삭제
+            </button>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {recentSearches.length === 0 ? (
+            <p className="text-[11px] text-slate-400">최근 검색한 내역이 없습니다.</p>
+          ) : (
+            recentSearches.map((tag, idx) => (
+              <span 
+                key={idx}
+                onClick={() => handleSearch(tag)}
+                className="bg-white border border-slate-200 text-slate-700 text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1 cursor-pointer hover:bg-slate-50"
+              >
+                #{tag}
+                <X size={12} className="text-slate-400 hover:text-red-500" onClick={(e) => handleRemoveRecent(e, tag)} />
+              </span>
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* 검색 결과 영역 */}
+      <div className="space-y-3 pt-2">
+        <h3 className="font-bold text-xs text-slate-800">
+          "{searchQuery || localInput}" 연관 추천 결과
+        </h3>
+
+        <div className="space-y-2">
+          <div className="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">소비 트렌드</span>
+              <p className="font-bold text-xs text-slate-900">{searchQuery || localInput || '인기 브랜드'} 관련 오픈런 & 품절 이슈</p>
+              <p className="text-[10px] text-slate-400">실시간 버즈량 전주 대비 +184% 증가</p>
+            </div>
+            <ChevronRight size={16} className="text-slate-300" />
+          </div>
+
+          <div className="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded">연관 상장 주식</span>
+              <p className="font-bold text-xs text-slate-900">{searchQuery || localInput || '관련 기업'} (KOSPI)</p>
+              <p className="text-[10px] text-slate-400">소비 수혜주 밸류체인 매핑 완료</p>
+            </div>
+            <ChevronRight size={16} className="text-slate-300" />
+          </div>
+        </div>
       </div>
     </div>
   );
