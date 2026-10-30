@@ -8,8 +8,8 @@ import {
 } from 'lucide-react';
 
 // 💡 본인의 Supabase URL과 Anon Key를 여기에 입력하세요
-const SUPABASE_URL = "https://fzgjbqlvnmenmkoloxhn.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_6EC5-VTJtf_Kr2-5_-2QOA_9UQSTtvc";
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export default function App() {
