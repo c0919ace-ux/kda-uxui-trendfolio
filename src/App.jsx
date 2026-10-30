@@ -7,7 +7,7 @@ import {
   Shield, Settings, Clock, ChevronLeft, Lock
 } from 'lucide-react';
 
-// Vercel Environment Variables에서 키값을 가져옵니다.
+// Vercel Environment Variables 사용
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -16,8 +16,6 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  
-  // 💡 선택한 이슈의 '의견 남기기' 모달 상태 관리
   const [selectedIssue, setSelectedIssue] = useState(null);
 
   const [likedBrands, setLikedBrands] = useState(['스타벅스', '나이키', '올리브영', '무신사']);
@@ -32,7 +30,7 @@ export default function App() {
 
   return (
     <div className="max-w-md mx-auto bg-slate-50 min-h-screen pb-20 font-sans text-slate-800 relative shadow-xl">
-      {/* 💡 의견 남기기 화면이 선택되었을 때 최우선으로 렌더링 */}
+      {/* 의견 남기기 모달/화면 */}
       {selectedIssue ? (
         <CommentView 
           issue={selectedIssue} 
@@ -144,7 +142,7 @@ export default function App() {
 }
 
 /* =========================================================================
-   1. 홈 뷰 (의견 남기기 클릭 기능 포함)
+   1. 홈 뷰 (의견 남기기 모달 연결)
    ========================================================================= */
 function HomeView({ setActiveTab, likedBrands, toggleLike, onOpenSearch, onOpenComment }) {
   const issues = [
@@ -306,7 +304,7 @@ function HomeView({ setActiveTab, likedBrands, toggleLike, onOpenSearch, onOpenC
         </div>
       </div>
 
-      {/* 신제품 & 소셜 핫이슈 (의견 남기기 클릭 가능) */}
+      {/* 신제품 & 소셜 핫이슈 (의견 남기기 버튼) */}
       <div className="space-y-3">
         <h2 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
           <span className="text-blue-600">⚡</span> 신제품 & 소셜 핫이슈
@@ -351,9 +349,233 @@ function HomeView({ setActiveTab, likedBrands, toggleLike, onOpenSearch, onOpenC
 }
 
 /* =========================================================================
-   2. 검색 뷰
+   2. 내 소비 뷰 (복구된 풍성한 UI)
    ========================================================================= */
-function SearchView({ searchQuery, setSearchQuery, onClose, setActiveTab }) {
+function MyExpenseView({ likedBrands, toggleLike }) {
+  const allBrands = [
+    { name: "스타벅스", category: "카페/디저트", exp: "주 4회 방문", icon: "☕", bg: "bg-emerald-700" },
+    { name: "나이키", category: "패션/잡화", exp: "최근 3개월 25만원", icon: "✔️", bg: "bg-black" },
+    { name: "올리브영", category: "뷰티/헬스", exp: "월 평균 8만원", icon: "💄", bg: "bg-lime-600" },
+    { name: "무신사", category: "패션/쇼핑", exp: "최근 1개월 12만원", icon: "M", bg: "bg-slate-900" },
+    { name: "다이소", category: "생활/잡화", exp: "주 2회 방문", icon: "🌸", bg: "bg-red-600" },
+    { name: "메가커피", category: "카페/음료", exp: "주 5회 방문", icon: "💛", bg: "bg-yellow-500" }
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl p-5 text-white space-y-3 shadow-lg">
+        <div className="flex justify-between items-center">
+          <span className="text-xs bg-white/20 px-2.5 py-1 rounded-full font-medium">3월 소비 요약</span>
+          <span className="text-xs opacity-80">전월 대비 +12%</span>
+        </div>
+        <div>
+          <p className="text-xs text-blue-100">이번 달 총 소비 금액</p>
+          <h2 className="text-2xl font-black mt-0.5">1,420,500 원</h2>
+        </div>
+        <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 flex items-center justify-between text-xs">
+          <span>☕ 카페/디저트 지출이 가장 많아요</span>
+          <span className="font-bold text-yellow-300">42%</span>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <div className="flex justify-between items-center">
+          <h2 className="text-base font-bold text-slate-900">내가 자주 이용하는 브랜드</h2>
+          <span className="text-xs text-slate-400">하트 클릭 시 찜 등록</span>
+        </div>
+
+        <div className="grid grid-cols-1 gap-2.5">
+          {allBrands.map((b, idx) => {
+            const isLiked = likedBrands.includes(b.name);
+            return (
+              <div key={idx} className="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 ${b.bg} rounded-xl flex items-center justify-center text-white font-bold text-sm`}>
+                    {b.icon}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-bold text-sm text-slate-900">{b.name}</span>
+                      <span className="text-[10px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">{b.category}</span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-0.5">{b.exp}</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => toggleLike(b.name)} 
+                  className={`p-2 rounded-full transition-colors ${isLiked ? 'text-pink-500 bg-pink-50' : 'text-slate-300 bg-slate-50'}`}
+                >
+                  <Heart size={18} fill={isLiked ? "currentColor" : "none"} />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================================
+   3. 주식 트렌드 뷰 (복구된 풍성한 UI)
+   ========================================================================= */
+function StockTrendView({ setActiveTab }) {
+  const stocks = [
+    { name: "CJ제일제당", code: "097950", price: "324,500원", change: "+3.8%", tag: "오픈런 간식 히트", isUp: true },
+    { name: "삼양식품", code: "003230", price: "215,000원", change: "+5.2%", tag: "해외 품절 대란", isUp: true },
+    { name: "신세계인터내셔날", code: "031430", price: "18,450원", change: "-1.1%", tag: "봄 세일 진행중", isUp: false },
+    { name: "아모레퍼시픽", code: "090430", price: "128,000원", change: "+2.4%", tag: "뷰티 앰플 품절", isUp: true }
+  ];
+
+  return (
+    <div className="space-y-5">
+      <div className="bg-slate-900 text-white p-5 rounded-3xl space-y-2 shadow-lg">
+        <span className="text-xs font-bold text-blue-400 tracking-wider">CONSUMPTION TO STOCK</span>
+        <h1 className="text-xl font-bold">내 소비가 주식이 된다면?</h1>
+        <p className="text-xs text-slate-400 leading-relaxed">
+          자주 사는 제품과 브랜드 기업의 실시간 주가를 확인하고 트렌드에 투자해 보세요.
+        </p>
+      </div>
+
+      <div className="space-y-3">
+        <h2 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+          <span>📈</span> 실시간 관심 수혜주 TOP 4
+        </h2>
+
+        <div className="space-y-2.5">
+          {stocks.map((s, idx) => (
+            <div key={idx} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-sm text-slate-900">{s.name}</span>
+                  <span className="text-[10px] text-slate-400">{s.code}</span>
+                </div>
+                <span className="inline-block text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">
+                  {s.tag}
+                </span>
+              </div>
+              <div className="text-right">
+                <div className="font-extrabold text-sm text-slate-900">{s.price}</div>
+                <div className={`text-xs font-bold ${s.isUp ? 'text-red-500' : 'text-blue-500'}`}>
+                  {s.change}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================================
+   4. 투자 정보 뷰 (복구된 풍성한 UI)
+   ========================================================================= */
+function InvestmentInfoView() {
+  const reports = [
+    { title: "2030 오픈런 디저트 열풍과 관련 수혜주 분석", author: "00증권 리서치", date: "2026.03.28", views: "1.2k" },
+    { title: "다이소 가성비 뷰티 라인업 확장에 따른 화장품 ODM 영향", author: "트렌드 Lab", date: "2026.03.25", views: "850" },
+    { title: "K-푸드 글로벌 인기에 따른 음식점 및 식품 기업 전망", author: "00증권 리서치", date: "2026.03.20", views: "2.1k" }
+  ];
+
+  return (
+    <div className="space-y-5">
+      <div className="space-y-1">
+        <h1 className="text-xl font-black text-slate-900">소비 인사이트 & 리포트</h1>
+        <p className="text-xs text-slate-500">빅데이터로 분석한 최신 트렌드 투자 리포트</p>
+      </div>
+
+      <div className="bg-purple-600 text-white p-4 rounded-2xl flex items-center justify-between shadow-md">
+        <div>
+          <span className="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded">WEEKLY PICK</span>
+          <h3 className="font-bold text-sm mt-1">이번 주 가장 핫한 소비 키워드</h3>
+          <p className="text-xs text-purple-200 mt-0.5">#오픈런_간식 #가성비_뷰티</p>
+        </div>
+        <Sparkles size={28} className="text-yellow-300 shrink-0" />
+      </div>
+
+      <div className="space-y-3">
+        <h2 className="text-base font-bold text-slate-900">최신 투자 분석 리포트</h2>
+        <div className="space-y-2.5">
+          {reports.map((r, idx) => (
+            <div key={idx} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm space-y-2 hover:border-purple-200 transition-colors">
+              <h3 className="font-bold text-sm text-slate-900 leading-snug">{r.title}</h3>
+              <div className="flex items-center justify-between text-xs text-slate-400 pt-1 border-t border-slate-50">
+                <span>{r.author} · {r.date}</span>
+                <span>조회 {r.views}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================================
+   5. 마이 페이지 뷰 (복구된 풍성한 UI)
+   ========================================================================= */
+function MyPageView({ likedBrands, setLikedBrands }) {
+  return (
+    <div className="space-y-5">
+      <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3">
+        <div className="w-12 h-12 rounded-full bg-purple-600 text-white font-bold flex items-center justify-center text-lg shadow-md">
+          백
+        </div>
+        <div>
+          <div className="flex items-center gap-1.5">
+            <h2 className="font-bold text-base text-slate-900">백보경 님</h2>
+            <span className="bg-purple-100 text-purple-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Lv.2 수집가</span>
+          </div>
+          <p className="text-xs text-slate-400 mt-0.5">trend_collector@trendfolio.com</p>
+        </div>
+      </div>
+
+      <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm space-y-3">
+        <h3 className="font-bold text-sm text-slate-900 flex items-center gap-1.5">
+          <Heart size={16} className="text-pink-500 fill-pink-500" /> 내가 찜한 브랜드 목록 ({likedBrands.length}개)
+        </h3>
+        {likedBrands.length === 0 ? (
+          <p className="text-xs text-slate-400 py-3 text-center">아직 찜한 브랜드가 없습니다.</p>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {likedBrands.map((brand, idx) => (
+              <span key={idx} className="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center gap-1.5">
+                {brand}
+                <button 
+                  onClick={() => setLikedBrands(likedBrands.filter(b => b !== brand))}
+                  className="text-slate-400 hover:text-red-500"
+                >
+                  <X size={12} />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm divide-y divide-slate-100 text-xs">
+        <div className="p-3.5 flex items-center justify-between text-slate-700 hover:bg-slate-50 cursor-pointer">
+          <span className="flex items-center gap-2"><Clock size={16} /> 최근 작성한 트렌드 의견</span>
+          <ChevronRight size={14} className="text-slate-400" />
+        </div>
+        <div className="p-3.5 flex items-center justify-between text-slate-700 hover:bg-slate-50 cursor-pointer">
+          <span className="flex items-center gap-2"><Shield size={16} /> 계정 보안 및 알림 설정</span>
+          <ChevronRight size={14} className="text-slate-400" />
+        </div>
+        <div className="p-3.5 flex items-center justify-between text-slate-700 hover:bg-slate-50 cursor-pointer">
+          <span className="flex items-center gap-2"><Settings size={16} /> 고객센터 및 의견 보내기</span>
+          <ChevronRight size={14} className="text-slate-400" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================================
+   6. 검색 뷰
+   ========================================================================= */
+function SearchView({ searchQuery, setSearchQuery, onClose }) {
   return (
     <div className="min-h-screen bg-slate-50 p-4 space-y-4">
       <div className="flex items-center gap-2">
@@ -374,70 +596,6 @@ function SearchView({ searchQuery, setSearchQuery, onClose, setActiveTab }) {
       </div>
       <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm text-center py-8 text-slate-400 text-sm">
         "{searchQuery}"에 대한 검색 결과가 있습니다.
-      </div>
-    </div>
-  );
-}
-
-/* =========================================================================
-   3. 내 소비 뷰
-   ========================================================================= */
-function MyExpenseView({ likedBrands, toggleLike }) {
-  return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-bold text-slate-900">내 소비 분석</h1>
-      <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm space-y-2">
-        <p className="text-xs text-slate-500">이번 달 나의 최애 카테고리</p>
-        <p className="text-lg font-bold text-blue-600">☕ 디저트 & 카페 (45%)</p>
-      </div>
-    </div>
-  );
-}
-
-/* =========================================================================
-   4. 주식 트렌드 뷰
-   ========================================================================= */
-function StockTrendView() {
-  return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-bold text-slate-900">소비 관련 종목 트렌드</h1>
-      <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-        <p className="text-sm font-bold text-slate-800">🔥 실시간 관심 수혜주</p>
-        <p className="text-xs text-slate-500 mt-1">CJ제일제당, 삼양식품, F&F</p>
-      </div>
-    </div>
-  );
-}
-
-/* =========================================================================
-   5. 투자 정보 뷰
-   ========================================================================= */
-function InvestmentInfoView() {
-  return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-bold text-slate-900">소비 데이터 인사이트</h1>
-      <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-        <p className="text-xs text-slate-500">2030 여성 소비 증가율 1위</p>
-        <p className="text-base font-bold text-pink-600 mt-1">인디 뷰티 브랜드 앰플 류 (+180%)</p>
-      </div>
-    </div>
-  );
-}
-
-/* =========================================================================
-   6. 마이 페이지 뷰
-   ========================================================================= */
-function MyPageView({ likedBrands }) {
-  return (
-    <div className="space-y-4">
-      <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3">
-        <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-600 font-bold flex items-center justify-center text-lg">
-          백
-        </div>
-        <div>
-          <h2 className="font-bold text-slate-900">백보경 님</h2>
-          <p className="text-xs text-slate-400">트렌드 수집가 · Lv.2</p>
-        </div>
       </div>
     </div>
   );
@@ -509,7 +667,7 @@ function CommentView({ issue, onClose }) {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-between relative animate-fadeIn pb-24">
-      {/* 상단 Header */}
+      {/* Header */}
       <div className="sticky top-0 bg-white/90 backdrop-blur-md z-40 px-4 py-3 flex items-center justify-between border-b border-slate-100">
         <button onClick={onClose} className="p-1 text-slate-700 hover:bg-slate-100 rounded-full">
           <ChevronLeft size={24} />
@@ -521,7 +679,6 @@ function CommentView({ issue, onClose }) {
       </div>
 
       <div className="p-4 space-y-4 flex-1 overflow-y-auto">
-        {/* 선택한 이슈 요약 카드 */}
         <div className="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3">
           <img src={issue?.img} alt={issue?.title} className="w-20 h-20 rounded-xl object-cover shrink-0" />
           <div className="space-y-1">
@@ -530,7 +687,6 @@ function CommentView({ issue, onClose }) {
           </div>
         </div>
 
-        {/* 기대도 투표 결과 그래프 바 */}
         <div className="grid grid-cols-2 gap-2">
           <div className="bg-blue-50/80 p-3 rounded-2xl border border-blue-100 flex items-center justify-between">
             <span className="text-xs font-bold text-blue-900 flex items-center gap-1">🔥 기대돼요</span>
@@ -542,7 +698,6 @@ function CommentView({ issue, onClose }) {
           </div>
         </div>
 
-        {/* 실시간 의견 피드 */}
         <div className="space-y-3 pt-2">
           <h3 className="font-bold text-sm text-slate-900">실시간 의견 피드</h3>
 
@@ -577,7 +732,7 @@ function CommentView({ issue, onClose }) {
         </div>
       </div>
 
-      {/* 하단 고정 의견 입력 바 */}
+      {/* 의견 입력 바 */}
       <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-slate-200 p-3.5 space-y-2.5 z-50">
         <div className="flex gap-2">
           {[
