@@ -17,6 +17,8 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  // [추가] 알림 / 세일 혜택 / 이벤트 상세 페이지 상태
+  const [subPage, setSubPage] = useState(null); // { type: 'notifications' | 'sale' | 'event', brand }
 
   // 찜한 브랜드 중앙 상태 관리
   const [likedBrands, setLikedBrands] = useState(['스타벅스', '나이키', '올리브영', '무신사']);
@@ -31,8 +33,15 @@ export default function App() {
 
   return (
     <div className={`max-w-md mx-auto min-h-screen pb-20 font-sans relative shadow-xl transition-colors duration-300 ${isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800'}`}>
-      {/* 댓글 상세 화면 모달 */}
-      {selectedIssue ? (
+      {/* [추가] 알림 / 세일 혜택 / 이벤트 상세 화면 */}
+      {subPage ? (
+        <SubPageView 
+          subPage={subPage} 
+          onClose={() => setSubPage(null)} 
+          isDarkMode={isDarkMode} 
+        />
+      ) : selectedIssue ? (
+        /* 댓글 상세 화면 모달 */
         <CommentView 
           issue={selectedIssue} 
           onClose={() => setSelectedIssue(null)} 
@@ -76,7 +85,11 @@ export default function App() {
                   <button onClick={() => setIsSearchOpen(true)} className={`p-1.5 rounded-full ${isDarkMode ? 'text-slate-200 hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-100'}`}>
                     <Search size={20} />
                   </button>
-                  <button className={`p-1.5 rounded-full relative ${isDarkMode ? 'text-slate-200 hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-100'}`}>
+                  {/* [수정] 알림 버튼 → 알림 페이지로 이동 */}
+                  <button 
+                    onClick={() => setSubPage({ type: 'notifications' })}
+                    className={`p-1.5 rounded-full relative ${isDarkMode ? 'text-slate-200 hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-100'}`}
+                  >
                     <Bell size={20} />
                     <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                   </button>
@@ -101,6 +114,7 @@ export default function App() {
                   setIsSearchOpen(true);
                 }}
                 onOpenComment={(issue) => setSelectedIssue(issue)}
+                onOpenDetail={(page) => setSubPage(page)}
                 isDarkMode={isDarkMode}
               />
             )}
@@ -151,7 +165,7 @@ export default function App() {
 /* =========================================================================
    1. 홈 - 소비 트렌드 발견
    ========================================================================= */
-function HomeView({ setActiveTab, onOpenSearch, onOpenComment, isDarkMode }) {
+function HomeView({ setActiveTab, onOpenSearch, onOpenComment, onOpenDetail, isDarkMode }) {
   const issues = [
     {
       id: 1,
@@ -261,6 +275,7 @@ function HomeView({ setActiveTab, onOpenSearch, onOpenComment, isDarkMode }) {
             <h2 className={`text-sm font-extrabold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>내가 찜한 브랜드의 트렌드</h2>
             <p className="text-[11px] text-slate-400">소비자가 주목하는 최신 핫이슈 & 이벤트 모음</p>
           </div>
+          {/* 전체보기 → 내 소비 탭으로 이동 */}
           <button onClick={() => setActiveTab('myExpense')} className="text-xs text-blue-600 font-bold flex items-center">
             전체보기<ChevronRight size={14} />
           </button>
@@ -283,7 +298,11 @@ function HomeView({ setActiveTab, onOpenSearch, onOpenComment, isDarkMode }) {
                 <span className="text-pink-500">🏷️</span>
                 <span className="truncate text-[11px]">무신사 스프링 메가세일 시작! 단독...</span>
               </div>
-              <button className="text-blue-500 font-bold shrink-0 flex items-center text-[10px]">
+              {/* [수정] 세일 혜택 보기 → 세일 상세 페이지 */}
+              <button 
+                onClick={() => onOpenDetail({ type: 'sale', brand: '무신사' })}
+                className="text-blue-500 font-bold shrink-0 flex items-center text-[10px]"
+              >
                 세일 혜택 보기 <ChevronRight size={12} />
               </button>
             </div>
@@ -305,7 +324,11 @@ function HomeView({ setActiveTab, onOpenSearch, onOpenComment, isDarkMode }) {
                 <span className="text-emerald-500">🎉</span>
                 <span className="truncate text-[11px]">봄 시즌 한정 체리블라썸 음료 & MD 오픈...</span>
               </div>
-              <button className="text-blue-500 font-bold shrink-0 flex items-center text-[10px]">
+              {/* [수정] 이벤트 보기 → 이벤트 상세 페이지 */}
+              <button 
+                onClick={() => onOpenDetail({ type: 'event', brand: '스타벅스' })}
+                className="text-blue-500 font-bold shrink-0 flex items-center text-[10px]"
+              >
                 이벤트 보기 <ChevronRight size={12} />
               </button>
             </div>
@@ -350,6 +373,104 @@ function HomeView({ setActiveTab, onOpenSearch, onOpenComment, isDarkMode }) {
     </div>
   );
 }
+
+/* =========================================================================
+   [추가] 알림 / 세일 혜택 / 이벤트 상세 페이지
+   ========================================================================= */
+function SubPageView({ subPage, onClose, isDarkMode }) {
+  const [notifs, setNotifs] = useState([
+    { id: 1, title: '무신사 스프링 메가세일 시작', desc: '찜한 브랜드의 빅세일이 열렸어요', time: '10분 전', read: false },
+    { id: 2, title: '스타벅스 프리퀀시 증정품 소진 임박', desc: '조기 품절 주의', time: '1시간 전', read: false },
+    { id: 3, title: '올리브영 세일 완판 소식', desc: '관련 종목 거래량이 늘고 있어요', time: '어제', read: true },
+  ]);
+
+  const benefits = {
+    sale: {
+      무신사: {
+        badge: '빅세일',
+        title: '스프링 메가세일 최대 80% 할인',
+        period: '진행 중',
+        items: ['신규 가입 쿠폰 최대 1만원', '브랜드별 단독 특가 및 한정 수량 혜택', '결제 수단별 추가 적립'],
+      },
+    },
+    event: {
+      스타벅스: {
+        badge: '프로모션',
+        title: '봄 시즌 한정 체리블라썸 음료 & MD',
+        period: '진행 중',
+        items: ['프리퀀시 완성 시 증정품 제공', '시즌 한정 음료 출시', '증정품 조기 소진 주의'],
+      },
+    },
+  };
+
+  const bg = isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800';
+  const card = isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100';
+  const isNotif = subPage.type === 'notifications';
+  const data = !isNotif ? benefits[subPage.type]?.[subPage.brand] : null;
+
+  return (
+    <div className={`min-h-screen ${bg}`}>
+      <header className={`sticky top-0 z-50 px-4 py-3 flex items-center justify-between border-b ${isDarkMode ? 'bg-slate-900/95 border-slate-800' : 'bg-white/95 border-slate-100'}`}>
+        <div className="flex items-center gap-2">
+          <button onClick={onClose} className="p-1 -ml-1"><ChevronLeft size={24} /></button>
+          <span className="text-lg font-bold">
+            {isNotif ? '알림' : `${subPage.brand} ${subPage.type === 'sale' ? '세일 혜택' : '이벤트'}`}
+          </span>
+        </div>
+        {isNotif && (
+          <button
+            onClick={() => setNotifs(notifs.map(n => ({ ...n, read: true })))}
+            className="text-xs font-bold text-blue-600"
+          >
+            모두 읽음
+          </button>
+        )}
+      </header>
+
+      <div className="p-4 space-y-3">
+        {isNotif && notifs.map(n => (
+          <button
+            key={n.id}
+            onClick={() => setNotifs(notifs.map(x => x.id === n.id ? { ...x, read: true } : x))}
+            className={`w-full text-left p-3.5 rounded-2xl border flex gap-3 ${card}`}
+          >
+            <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${n.read ? 'bg-transparent' : 'bg-red-500'}`} />
+            <div className="flex-1">
+              <p className="text-xs font-bold">{n.title}</p>
+              <p className="text-[11px] text-slate-400 mt-0.5">{n.desc}</p>
+              <p className="text-[10px] text-slate-400 mt-1">{n.time}</p>
+            </div>
+          </button>
+        ))}
+
+        {data && (
+          <>
+            <div className={`p-4 rounded-2xl border space-y-2 ${card}`}>
+              <span className="bg-blue-50 text-blue-600 text-[10px] font-bold px-2 py-0.5 rounded">{data.badge}</span>
+              <h2 className="text-base font-black">{data.title}</h2>
+              <p className="text-[11px] text-slate-400">기간: {data.period}</p>
+            </div>
+            <div className={`p-4 rounded-2xl border space-y-2.5 ${card}`}>
+              <h3 className="text-sm font-extrabold">혜택 안내</h3>
+              {data.items.map((item, i) => (
+                <div key={i} className="flex items-center gap-2 text-xs">
+                  <Check size={14} className="text-blue-600 shrink-0" />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+            <button onClick={onClose} className="w-full bg-blue-700 hover:bg-blue-800 text-white text-sm font-bold py-3 rounded-xl">
+              확인
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ⚠️ 이 아래에는 기존 파일에 있던 나머지 컴포넌트를 그대로 붙여넣으세요:
+   CommentView, SearchView, MyExpenseView, StockTrendView, InvestmentInfoView, MyPageView */
 
 /* =========================================================================
    2. 내 소비 - 나의 소비 관심사 분석
